@@ -23,7 +23,7 @@ async function createAnimal(data: FormData) {
     await prisma.animal.create({ data: {
         name: petName,
         species: species,
-        user: {
+        User: {
             connect: {
                 email: email,
             }
