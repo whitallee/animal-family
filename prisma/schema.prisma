@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String      @id @default(cuid())
+  email         String?     @unique
+  name          String?
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  animals       Animal[]
+  Enclosure     Enclosure[]
+  sessions      Session[]
+  ToDoItem      ToDoItem[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Animal {
+  id          Int        @id @default(autoincrement())
+  name        String
+  species     String
+  userId      String
+  enclosureId Int?
+  enclosure   Enclosure? @relation(fields: [enclosureId], references: [id])
+  User        User       @relation(fields: [userId], references: [id])
+  toDos       ToDoItem[]
+}
+
+model Enclosure {
+  id        Int        @id @default(autoincrement())
+  name      String
+  userEmail String
+  animals   Animal[]
+  User      User       @relation(fields: [userEmail], references: [email])
+  toDos     ToDoItem[]
+}
+
+model ToDoItem {
+  id          Int        @id @default(autoincrement())
+  enclosureId Int?
+  animalId    Int?
+  task        String
+  complete    Boolean    @default(false)
+  userEmail   String
+  animal      Animal?    @relation(fields: [animalId], references: [id])
+  enclosure   Enclosure? @relation(fields: [enclosureId], references: [id])
+  User        User       @relation(fields: [userEmail], references: [email])
+}
