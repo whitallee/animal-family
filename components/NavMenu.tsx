@@ -29,7 +29,7 @@ export default function NavMenu() {
     const linkClasses = "rounded px-2"
 
     return (
-        <div className="bg-zinc-500 px-4 py-2 w-full h-fit flex justify-between sticky top-0 overflow-scroll">
+        <div className="bg-zinc-500 px-4 py-2 w-full h-fit flex justify-between sticky top-0">
             <AuthButton/>
             <ul className="flex sm:gap-8 gap-4 text-center ml-4">
                 <Link className={pathname == "/" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/"><li>My Animal Family</li></Link>
