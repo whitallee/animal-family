@@ -26,13 +26,14 @@ function AuthButton() {
 export default function NavMenu() {
 
     const pathname = usePathname()
+    const linkClasses = "rounded px-2"
 
     return (
         <div className="bg-zinc-500 px-4 py-2 w-full h-fit flex justify-between sticky top-0">
             <AuthButton/>
             <ul className="flex gap-8">
-                <Link className={pathname == "/" ? "active rounded px-2 bg-zinc-700" : "rounded px-2 hover:bg-zinc-700"} href="/"><li>My Animal Family</li></Link>
-                <Link className={pathname == "/add-animal" ? "active rounded px-2 bg-zinc-700" : "rounded px-2 hover:bg-zinc-700"} href="/add-animal"><li>Add Animal</li></Link>
+                <Link className={pathname == "/" ? "active bg-zinc-700 btn" : "hover:bg-zinc-700 btn" + linkClasses} href="/"><li>My Animal Family</li></Link>
+                <Link className={pathname == "/add-animal" ? "active bg-zinc-700 btn" : "hover:bg-zinc-700 btn"} href="/add-animal"><li>Add Animal</li></Link>
             </ul>
         </div>
     )
