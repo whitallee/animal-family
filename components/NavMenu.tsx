@@ -8,17 +8,17 @@ function AuthButton() {
 
     if (session) {
         return (
-            <div>
+            <div className="text-white flex flex-col justify-center items-start text-sm sm:text-base">
                 {session?.user?.email}
-                <button className="mx-2 px-2 rounded text-zinc-300 hover:bg-zinc-700" onClick={() => signOut()}>Sign Out</button>
+                <button className="rounded text-zinc-300 hover:bg-zinc-700" onClick={() => signOut()}>Sign Out</button>
             </div>
         )
     }
     //else
     return (
-        <div>
-            Not signed in ---
-            <button className="font-bold px-2 rounded hover:bg-zinc-700" onClick={() => signIn()}>Sign In</button>
+        <div className="text-white flex flex-col justify-center items-start text-sm sm:text-base">
+            Signed out -
+            <button className="font-bold rounded hover:bg-zinc-700" onClick={() => signIn()}>Sign In</button>
         </div>
     )
 }
@@ -29,11 +29,11 @@ export default function NavMenu() {
     const linkClasses = "rounded px-2"
 
     return (
-        <div className="bg-zinc-500 px-4 py-2 w-full h-fit flex justify-between sticky top-0">
+        <div className="bg-zinc-500 px-4 py-2 w-full h-fit flex justify-between sticky top-0 overflow-scroll">
             <AuthButton/>
-            <ul className="flex gap-8">
-                <Link className={pathname == "/" ? "active bg-zinc-700 btn" : "hover:bg-zinc-700 btn" + linkClasses} href="/"><li>My Animal Family</li></Link>
-                <Link className={pathname == "/add-animal" ? "active bg-zinc-700 btn" : "hover:bg-zinc-700 btn"} href="/add-animal"><li>Add Animal</li></Link>
+            <ul className="flex sm:gap-8 gap-4 text-center ml-4">
+                <Link className={pathname == "/" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/"><li>My Animal Family</li></Link>
+                <Link className={pathname == "/add-animal" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/add-animal"><li>Add Animal</li></Link>
             </ul>
         </div>
     )
