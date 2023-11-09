@@ -40,7 +40,9 @@ export default async function AddAnimal() {
     if(!session) {
         return (
             <>
-                Must be logged in to add an animal to your family.
+                <div className="text-center">
+                  Must be logged in to add an animal to your family.
+                </div>
                 <form method="get" action="/api/auth/signin">
                   <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Log In</button>
                 </form>

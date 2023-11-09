@@ -17,7 +17,7 @@ function AuthButton() {
     //else
     return (
         <div className="text-white flex flex-col justify-center items-start text-sm sm:text-base">
-            Signed out -
+            Signed out:
             <button className="font-bold rounded hover:bg-zinc-700" onClick={() => signIn()}>Sign In</button>
         </div>
     )

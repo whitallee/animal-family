@@ -23,7 +23,9 @@ export default async function MyFamily() {
     if(!session){
         return (
             <>
-                Must be logged in to view your animal family.
+                <div className="text-center">
+                    Must be logged in to view your animal family.
+                </div>
                 <form method="get" action="/api/auth/signin">
                   <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Log In</button>
                 </form>
@@ -54,15 +56,15 @@ export default async function MyFamily() {
 
     if (animalList?.length === 0){
         return (
-            <>
+            <div className="text-center">
                 You don't have any animals in your family yet, add an animal to see your family.
-            </>
+            </div>
         )
     }
 
     return (
         <>
-            <ul className="m-auto">{animalList}</ul>
+            <ul>{animalList}</ul>
         </>
     )
 }
