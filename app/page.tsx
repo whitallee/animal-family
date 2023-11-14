@@ -45,8 +45,8 @@ export default async function MyFamily() {
     })
 
     const animalListItems = userAnimals?.animals.map(animal => 
-            <li key={animal.id} className="text-zinc-500 flex place-content-between items-center gap-8 py-4 px-4">
-                <span><strong className="dark:text-white text-black">{animal.name}: </strong>{animal.species}</span>
+            <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 px-4">
+                <span><strong>{animal.name}</strong><span className="text-zinc-500">: {animal.species}</span></span>
                 <form action={deleteAnimal}>
                   <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
                   <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600">&#128465;</button>

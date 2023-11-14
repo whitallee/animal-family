@@ -102,7 +102,7 @@ export default async function AddEnclosure() {
             Enclosure: true
         }
     })
-    console.log(userAnimalsEnclosures);
+    //console.log(userAnimalsEnclosures);
 
     let animalCount = userAnimalsEnclosures?.animals.length
 
@@ -116,8 +116,8 @@ export default async function AddEnclosure() {
 
     const animalCheckboxList = userAnimalsEnclosures?.animals.map(animal => 
         <div className="flex" key={animal.id}>
-            <input id={animal.id.toString()} name="petIds" value={animal.id.toString()} type="checkbox"></input>
-            <label htmlFor={animal.id.toString()}>{animal.name}</label>
+            <input id={animal.id.toString()} name="petIds" value={animal.id.toString()} type="checkbox" className="rounded-lg"></input>
+            <label htmlFor={animal.id.toString()}><strong className="ml-2">{animal.name}</strong>{animal.enclosureId ? <span className="text-zinc-500">: Has an enclosure</span> : <></>}</label>
         </div>
     );
 
@@ -151,7 +151,8 @@ export default async function AddEnclosure() {
 
   return (
     <div className="flex flex-col items-center justify-center m-auto">
-      <form action={createEnclosure} className="flex flex-col gap-4">
+    <span className="text-zinc-500 text-center max-w-md mx-4">Adding an animal to a new enclosure that already has one will move the animal to the new enclosure.</span>
+      <form action={createEnclosure} className="flex flex-col gap-4 m-4">
         <input required autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
         {animalCheckboxList}
         <div className="flex justify-evenly">
