@@ -35,7 +35,7 @@ export default async function MyFamily() {
 
     const email: any = session?.user?.email
 
-    const animals = await prisma.user.findFirst({
+    const userAnimals = await prisma.user.findFirst({
         where: {
             email: email
         },
@@ -44,7 +44,7 @@ export default async function MyFamily() {
         }
     })
 
-    const animalList = animals?.animals.map(animal => 
+    const animalListItems = userAnimals?.animals.map(animal => 
             <li key={animal.id} className="text-zinc-500 flex place-content-between items-center gap-8 py-4 px-4">
                 <span><strong className="dark:text-white text-black">{animal.name}: </strong>{animal.species}</span>
                 <form action={deleteAnimal}>
@@ -54,7 +54,7 @@ export default async function MyFamily() {
             </li>
         );
 
-    if (animalList?.length === 0){
+    if (animalListItems?.length === 0){
         return (
             <div className="text-center">
                 You don't have any animals in your family yet, add an animal to see your family.
@@ -64,7 +64,7 @@ export default async function MyFamily() {
 
     return (
         <>
-            <ul>{animalList}</ul>
+            <ul>{animalListItems}</ul>
         </>
     )
 }

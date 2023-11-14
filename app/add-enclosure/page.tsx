@@ -3,37 +3,73 @@ import prisma from "@/util/prisma-client"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../api/auth/[...nextauth]/route"
 import { redirect } from "next/navigation"
-import { types } from "util"
 
 async function createEnclosure(data: FormData) {
 
   "use server"
 
-    console.log(data);
+    //console.log(data);
 
     const session = await getServerSession(authOptions);
-    const petIds = data.getAll("petIds")
-    console.log(petIds);
-    // const species = data.get("species")?.valueOf()
-    // const email: any = session?.user?.email
+    const email: any = session?.user?.email;
+    const petIds = data.getAll("petIds");
+    const enclosureName = data.get("enclosureName")?.valueOf();
 
-    // if (typeof(petName) !== "string" || petName.length === 0) {
-    //     throw new Error("Invalid Pet Name")
-    // }
-    // else if (typeof(species) !== "string" || species.length === 0) {
-    //     throw new Error("Invalid Species")
-    // }
+    async function addEnclosureToAnimal(petId: number) {
+        const newEnclosure = await prisma.enclosure.findFirst({
+            where: {
+                name: enclosureName,
+                userEmail: email
+            }
+        })
 
-    // await prisma.animal.create({ data: {
-    //     name: petName,
-    //     species: species,
-    //     User: {
-    //         connect: {
-    //             email: email,
-    //         }
-    //     }}})
+        await prisma.animal.update({
+            where: {
+                id: petId,
+            },
+            data: {
+                enclosureId: newEnclosure?.id,
+            }
+        })
+    }
 
-    // redirect("/")
+    if (typeof(enclosureName) !== "string" || enclosureName.length === 0) {
+        redirect("/add-enclosure");
+    }
+
+    const userEnclosures = await prisma.user.findFirst({
+        where: {
+            email: email,
+        },
+        include: {
+            Enclosure: true,
+    }})
+
+    //Redirects if the enclosure name the user chose already exists in their enclosures
+    userEnclosures?.Enclosure.forEach(element => {
+        if (element.name === enclosureName) {
+            console.log("enclosure already exists");
+            redirect("/add-enclosure")
+        }
+    });
+
+    //Create new enclosure
+    await prisma.enclosure.create({ data: {
+        name: enclosureName,
+        userEmail: email
+    }})
+
+    //If there were animals selected, it adds the animals the newly created enclosure
+    if (petIds.length > 0) {
+        for (let index = 0; index < petIds.length; index++) {
+            if (typeof(petIds[index].valueOf()) === "object") {
+                throw Error("petId cannot be an object to set its enclosure")
+            }
+            const petId: number = parseInt(petIds[index].valueOf().toString());
+            addEnclosureToAnimal(petId)
+            
+        }
+    }
 }
 
 
@@ -57,16 +93,18 @@ export default async function AddEnclosure() {
     //call all animals for a user and return a mapped list of them that dont have enclosures yet ** for every animal
     const email: any = session?.user?.email
 
-    const userAnimals = await prisma.user.findFirst({
+    const userAnimalsEnclosures = await prisma.user.findFirst({
         where: {
             email: email
         },
         include: {
-            animals: true
+            animals: true,
+            Enclosure: true
         }
     })
+    console.log(userAnimalsEnclosures);
 
-    let animalCount = userAnimals?.animals.length
+    let animalCount = userAnimalsEnclosures?.animals.length
 
     if (animalCount === undefined) {
         return (
@@ -76,9 +114,9 @@ export default async function AddEnclosure() {
         )
     }
 
-    const animalCheckboxList = userAnimals?.animals.map(animal => 
+    const animalCheckboxList = userAnimalsEnclosures?.animals.map(animal => 
         <div className="flex" key={animal.id}>
-            <input id={animal.id.toString()} name="petName" value={animal.id.toString()} type="checkbox"></input>
+            <input id={animal.id.toString()} name="petIds" value={animal.id.toString()} type="checkbox"></input>
             <label htmlFor={animal.id.toString()}>{animal.name}</label>
         </div>
     );
@@ -114,7 +152,7 @@ export default async function AddEnclosure() {
   return (
     <div className="flex flex-col items-center justify-center m-auto">
       <form action={createEnclosure} className="flex flex-col gap-4">
-        <input autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
+        <input required autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
         {animalCheckboxList}
         <div className="flex justify-evenly">
             <Link href=".">Cancel</Link>

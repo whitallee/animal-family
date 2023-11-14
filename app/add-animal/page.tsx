@@ -14,10 +14,10 @@ async function createAnimal(data: FormData) {
     const email: any = session?.user?.email
 
     if (typeof(petName) !== "string" || petName.length === 0) {
-        throw new Error("Invalid Pet Name")
+        redirect("/add-animal")
     }
     else if (typeof(species) !== "string" || species.length === 0) {
-        throw new Error("Invalid Species")
+        redirect("/add-animal")
     }
 
     await prisma.animal.create({ data: {
@@ -53,8 +53,8 @@ export default async function AddAnimal() {
   return (
     <main className="flex flex-col items-center justify-center m-auto">
       <form action={createAnimal} className="flex flex-col gap-4">
-        <input autoFocus type="text" placeholder="Pet Name" name="petName" className="rounded text-black px-2"></input>
-        <input type="text" placeholder="Species" name="species" className="rounded text-black px-2"></input>
+        <input required autoFocus type="text" placeholder="Pet Name" name="petName" className="rounded text-black px-2"></input>
+        <input required type="text" placeholder="Species" name="species" className="rounded text-black px-2"></input>
         <div className="flex justify-evenly">
             <Link href=".">Cancel</Link>
             <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Add Animal</button>
