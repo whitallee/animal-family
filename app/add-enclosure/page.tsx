@@ -116,39 +116,11 @@ export default async function AddEnclosure() {
     }
 
     const animalCheckboxList = userAnimalsEnclosures?.animals.map(animal => 
-        <div className="flex" key={animal.id}>
+        <div className="flex py-4 items-center" key={animal.id}>
             <input id={animal.id.toString()} name="petIds" value={animal.id.toString()} type="checkbox" className="rounded-lg"></input>
             <label htmlFor={animal.id.toString()}><strong className="ml-2">{animal.name}</strong>{animal.enclosureId ? <span className="text-zinc-500">: Has an enclosure</span> : <></>}</label>
         </div>
     );
-
-    // let noEnclosureAnimals: string[] = []
-
-    // for (let index = 0; index < animalCount; index++) {
-    //     if (userAnimals === null) {
-    //         throw new Error("userAnimals is undefined");
-    //     }
-    //     const animal = userAnimals.animals[index];
-    //     if (typeof(animal?.enclosureId) !== "number") {
-    //         noEnclosureAnimals.push(animal.name);
-    //     }
-    // }
-
-    // console.log(noEnclosureAnimals);
-
-    // if (noEnclosureAnimals.length === 0) {
-    //     return (
-    //     <div className="flex flex-col items-center justify-center m-auto">
-    //         <form action={createEnclosure} className="flex flex-col gap-4">
-    //             <input autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
-    //             <div className="flex justify-evenly">
-    //                 <Link href=".">Cancel</Link>
-    //                 <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Add Animal</button>
-    //             </div>
-    //         </form>
-    //     </div>
-    //     )
-    // }
 
   return (
     <div className="flex flex-col items-center justify-center m-auto">

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import prisma from "@/util/prisma-client";
 import { redirect } from "next/navigation";
+import { TrashIcon } from "lucide-react";
 
 async function deleteAnimal(data: FormData) {
   "use server"
@@ -87,7 +88,7 @@ export default async function MyFamily() {
                 <span><strong>{animal.name}: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
                 <form action={deleteAnimal}>
                   <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
-                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
+                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
                 </form>
             </li>
         );
@@ -106,11 +107,11 @@ export default async function MyFamily() {
 
     const enclosureAnimalListItems = enclosureAnimals.map(enclosure =>
             <li key={enclosure.id} className="border-solid border-zinc-500 border-2 rounded-xl m-4">
-                <div className="flex gap-2 pt-4 pl-4">
+                <div className="flex gap-2 items-center pt-2 pl-4">
                     <strong>{enclosure.name}</strong>
                     <form action={deleteEnclosure}>
                     <input type="hidden" id="enclosureId" name="enclosureId" value={enclosure.id}/>
-                    <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
+                    <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
                     </form>
                 </div>
                 <div className="w-full border border-zinc-500 rounded mt-2"></div>
@@ -120,7 +121,7 @@ export default async function MyFamily() {
                         <span>{animal.name}: <span className="text-zinc-500 italic">{animal.species}</span></span>
                         <form action={deleteAnimal}>
                           <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
-                          <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
+                          <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
                         </form>
                         </li>
                     )}
