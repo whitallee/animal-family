@@ -70,6 +70,7 @@ async function createEnclosure(data: FormData) {
             
         }
     }
+    redirect("/");
 }
 
 
@@ -84,7 +85,7 @@ export default async function AddEnclosure() {
                   Must be logged in to add an enclosure your family.
                 </div>
                 <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Log In</button>
+                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
                 </form>
             </>
         )
@@ -151,13 +152,13 @@ export default async function AddEnclosure() {
 
   return (
     <div className="flex flex-col items-center justify-center m-auto">
-    <span className="text-zinc-500 text-center max-w-md mx-4">Adding an animal to a new enclosure that already has one will move the animal to the new enclosure.</span>
+    <span className="text-zinc-500 text-center mx-4">If an animal already has an enclosure, then it will be moved to the new enclosure.</span>
       <form action={createEnclosure} className="flex flex-col gap-4 m-4">
         <input required autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
         {animalCheckboxList}
         <div className="flex justify-evenly">
             <Link href=".">Cancel</Link>
-            <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Add Enclosure</button>
+            <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Enclosure</button>
         </div>
       </form>
     </div>

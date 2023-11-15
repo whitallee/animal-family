@@ -101,10 +101,9 @@
     border-radius: 0.25rem/*4px*/;
     padding-left: 0.5rem/* 8px */;
     padding-right: 0.5rem/* 8px */;
-    color: white;
     display: flex;
     align-items: center;
-    @apply text-sm sm:text-base
+    @apply text-sm sm:text-base transition
   }
   }
 }

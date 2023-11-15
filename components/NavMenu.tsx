@@ -18,17 +18,17 @@ function AuthButton() {
 
     if (session) {
         return (
-            <div className="text-white flex flex-col justify-center items-start text-sm sm:text-base">
-                {session?.user?.email}
-                <button className="rounded text-zinc-300 hover:bg-zinc-700" onClick={() => signOut()}>Sign Out</button>
+            <div className="flex flex-col justify-center items-start text-sm sm:text-base">
+                {session?.user?.name}
+                <button className="rounded text-zinc-400 hover:bg-zinc-700" onClick={() => signOut()}>Sign Out</button>
             </div>
         )
     }
     //else
     return (
-        <div className="text-white flex flex-col justify-center items-start text-sm sm:text-base">
+        <div className="flex flex-col justify-center items-start text-sm sm:text-base px-2">
             Signed out:
-            <button className="font-bold rounded hover:bg-zinc-700" onClick={() => signIn()}>Sign In</button>
+            <button className="font-bold rounded hover:bg-zinc-700 transition" onClick={() => signIn()}>Sign In</button>
         </div>
     )
 }
