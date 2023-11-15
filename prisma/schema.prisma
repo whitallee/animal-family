@@ -60,8 +60,8 @@ model Animal {
   species     String
   userId      String
   enclosureId Int?
-  enclosure   Enclosure? @relation(fields: [enclosureId], references: [id])
-  User        User       @relation(fields: [userId], references: [id])
+  enclosure   Enclosure? @relation(fields: [enclosureId], references: [id]) //might need an enclosure relation
+  User        User       @relation(fields: [userId], references: [id]) //NEEDS a user relation
   toDos       ToDoItem[]
 }
 
@@ -70,7 +70,7 @@ model Enclosure {
   name      String
   userEmail String
   animals   Animal[]
-  User      User       @relation(fields: [userEmail], references: [email])
+  User      User       @relation(fields: [userEmail], references: [email]) //NEEDS a user relation
   toDos     ToDoItem[]
 }
 

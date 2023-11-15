@@ -6,15 +6,40 @@ import { redirect } from "next/navigation";
 async function deleteAnimal(data: FormData) {
   "use server"
 // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-  const animalId: string = data.get("animalId")?.valueOf()
+  const animalId: number = parseInt(data.get("animalId")?.valueOf())
 
   await prisma.animal.delete({ 
       where: {
-        id: parseInt(animalId)
+        id: animalId
       }})
 
   redirect("/")
 }
+
+async function deleteEnclosure(data: FormData) {
+    "use server"
+  // @ts-ignore ignores 'enclosureId' type of 'string | Object | undefined'
+
+  //need to make animal enclosureId null
+    const enclosureId: number = parseInt(data.get("enclosureId")?.valueOf())
+    console.log(enclosureId);
+
+    await prisma.animal.updateMany({
+        where: {
+            enclosureId: enclosureId,
+        },
+        data: {
+            enclosureId: null,
+        }
+    })
+  
+    await prisma.enclosure.delete({
+        where: {
+          id: enclosureId,
+        }})
+  
+    redirect("/")
+  }
 
 export default async function MyFamily() {
 
@@ -27,7 +52,7 @@ export default async function MyFamily() {
                     Must be logged in to view your animal family.
                 </div>
                 <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900">Log In</button>
+                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
                 </form>
             </>
         )
@@ -35,26 +60,74 @@ export default async function MyFamily() {
 
     const email: any = session?.user?.email
 
-    const animals = await prisma.user.findFirst({
+    const userAnimalsEnclosures = await prisma.user.findFirst({
         where: {
             email: email
         },
         include: {
-            animals: true
+            animals: true,
+            Enclosure: true,
         }
     })
 
-    const animalList = animals?.animals.map(animal => 
-            <li key={animal.id} className="text-zinc-500 flex place-content-between items-center gap-8 py-4 px-4">
-                <span><strong className="dark:text-white text-black">{animal.name}: </strong>{animal.species}</span>
+    //creating empty arrays for sperating enclosure and non-enclosure animals
+    let noEnclosureAnimals: {id: number, name: string, species: string}[] = []
+    userAnimalsEnclosures?.animals.forEach(animal => {
+        if (!animal.enclosureId) {
+            noEnclosureAnimals.push({
+                name: animal.name,
+                species: animal.species,
+                id: animal.id,
+            })
+        }
+    });
+
+    //creating enclosure array with animals attached
+    let enclosureAnimals: {id: number, name: string, enclosureAnimalList: {id: number, name: string, species: string}[]}[] = []
+    userAnimalsEnclosures?.Enclosure?.forEach(enclosure => {
+         let enclosureFamily = userAnimalsEnclosures.animals.filter((animal) => animal.enclosureId === enclosure.id)
+         let enclosureObject = {
+            id: enclosure.id,
+            name: enclosure.name,
+            enclosureAnimalList: enclosureFamily,
+         }
+         enclosureAnimals.push(enclosureObject)
+    })
+
+    const enclosureAnimalListItems = enclosureAnimals.map(enclosure =>
+            <li key={enclosure.id} className="border-solid border-zinc-500 border-2 rounded-xl m-4 p-4">
+                <div className="flex gap-2">
+                    <strong>{enclosure.name}</strong>
+                    <form action={deleteEnclosure}>
+                    <input type="hidden" id="enclosureId" name="enclosureId" value={enclosure.id}/>
+                    <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
+                    </form>
+                </div>
+                <div className="w-full border border-zinc-500 rounded mt-2"></div>
+                <ul>
+                    {enclosure.enclosureAnimalList.map(animal =>
+                        <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 pr-4 pl-8">
+                        <span>{animal.name}: <span className="text-zinc-500 italic">{animal.species}</span></span>
+                        <form action={deleteAnimal}>
+                          <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
+                          <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
+                        </form>
+                        </li>
+                    )}
+                </ul>
+            </li>
+        );
+    const animalListItems = noEnclosureAnimals.map(animal => 
+            <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 px-4">
+                <span><strong>{animal.name}: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
                 <form action={deleteAnimal}>
                   <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
-                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600">&#128465;</button>
+                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
                 </form>
             </li>
         );
 
-    if (animalList?.length === 0){
+    if (animalListItems?.length === 0){
         return (
             <div className="text-center">
                 You don't have any animals in your family yet, add an animal to see your family.
@@ -64,7 +137,10 @@ export default async function MyFamily() {
 
     return (
         <>
-            <ul>{animalList}</ul>
+            <ul>
+                {animalListItems}
+                {enclosureAnimalListItems}
+            </ul>
         </>
     )
 }
