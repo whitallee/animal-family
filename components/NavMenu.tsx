@@ -36,7 +36,6 @@ function AuthButton() {
 export default function NavMenu() {
 
     const pathname = usePathname()
-    const linkClasses = "rounded px-2"
 
     return (
         <div className="bg-zinc-500 px-4 py-2 w-full h-fit flex justify-between sticky top-0">
@@ -45,11 +44,11 @@ export default function NavMenu() {
             <DropdownMenu>
                 <DropdownMenuTrigger><MenuIcon/></DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+                    <DropdownMenuLabel><span className="text-lg">Navigation</span></DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem><Link className={pathname == "/" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 text-zinc-900 navLink"} href="/">My Animal Family</Link></DropdownMenuItem>
-                    <DropdownMenuItem><Link className={pathname == "/add-animal" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 text-zinc-900 navLink"} href="/add-animal">Add Animal</Link></DropdownMenuItem>
-                    <DropdownMenuItem><Link className={pathname == "/add-enclosure" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 text-zinc-900 navLink"} href="/add-enclosure">Add Enclosure</Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className={pathname == "/" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/">My Animal Family</Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className={pathname == "/add-animal" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/add-animal">Add Animal</Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className={pathname == "/add-enclosure" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/add-enclosure">Add Enclosure</Link></DropdownMenuItem>
                 </DropdownMenuContent>
                 </DropdownMenu>
             </div>

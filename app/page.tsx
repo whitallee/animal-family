@@ -82,6 +82,16 @@ export default async function MyFamily() {
         }
     });
 
+    const animalListItems = noEnclosureAnimals.map(animal => 
+            <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 px-8">
+                <span><strong>{animal.name}: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
+                <form action={deleteAnimal}>
+                  <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
+                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
+                </form>
+            </li>
+        );
+
     //creating enclosure array with animals attached
     let enclosureAnimals: {id: number, name: string, enclosureAnimalList: {id: number, name: string, species: string}[]}[] = []
     userAnimalsEnclosures?.Enclosure?.forEach(enclosure => {
@@ -95,8 +105,8 @@ export default async function MyFamily() {
     })
 
     const enclosureAnimalListItems = enclosureAnimals.map(enclosure =>
-            <li key={enclosure.id} className="border-solid border-zinc-500 border-2 rounded-xl m-4 p-4">
-                <div className="flex gap-2">
+            <li key={enclosure.id} className="border-solid border-zinc-500 border-2 rounded-xl m-4">
+                <div className="flex gap-2 pt-4 pl-4">
                     <strong>{enclosure.name}</strong>
                     <form action={deleteEnclosure}>
                     <input type="hidden" id="enclosureId" name="enclosureId" value={enclosure.id}/>
@@ -117,20 +127,11 @@ export default async function MyFamily() {
                 </ul>
             </li>
         );
-    const animalListItems = noEnclosureAnimals.map(animal => 
-            <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 px-4">
-                <span><strong>{animal.name}: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
-                <form action={deleteAnimal}>
-                  <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
-                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition">&#128465;</button>
-                </form>
-            </li>
-        );
 
-    if (animalListItems?.length === 0){
+    if (animalListItems?.length === 0 && enclosureAnimalListItems?.length === 0){
         return (
             <div className="text-center">
-                You don't have any animals in your family yet, add an animal to see your family.
+                You don't have any animals or enclosure in your family yet, add one to see your family.
             </div>
         )
     }
