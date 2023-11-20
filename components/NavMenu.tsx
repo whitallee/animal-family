@@ -49,6 +49,8 @@ export default function NavMenu() {
                     <DropdownMenuItem><Link className={pathname == "/" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/">My Animal Family</Link></DropdownMenuItem>
                     <DropdownMenuItem><Link className={pathname == "/add-animal" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/add-animal">Add Animal</Link></DropdownMenuItem>
                     <DropdownMenuItem><Link className={pathname == "/add-enclosure" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/add-enclosure">Add Enclosure</Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className={pathname == "/tasks" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/tasks">My Tasks</Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className={pathname == "/add-task" ? "active bg-zinc-500 text-zinc-100 navLink text-lg" : "hover:bg-zinc-500 hover:text-zinc-100 text-zinc-900 navLink text-lg"} href="/add-task">Add Task</Link></DropdownMenuItem>
                 </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -56,6 +58,9 @@ export default function NavMenu() {
                 <Link className={pathname == "/" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/"><li>My Animal Family</li></Link>
                 <Link className={pathname == "/add-animal" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/add-animal"><li>Add Animal</li></Link>
                 <Link className={pathname == "/add-enclosure" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/add-enclosure"><li>Add Enclosure</li></Link>
+                <Link className={pathname == "/tasks" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/tasks"><li>My Tasks</li></Link>
+                <Link className={pathname == "/add-task" ? "active bg-zinc-700 navLink" : "hover:bg-zinc-700 navLink"} href="/add-task"><li>Add Task</li></Link>
+                
             </ul>
         </div>
     )

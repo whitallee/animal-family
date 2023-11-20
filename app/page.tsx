@@ -73,7 +73,7 @@ export default async function MyFamily() {
         }
     })
 
-    //creating empty arrays for sperating enclosure and non-enclosure animals
+    //creating non-enclosure array
     let noEnclosureAnimals: {id: number, name: string, species: string}[] = []
     userAnimalsEnclosures?.animals.forEach(animal => {
         if (!animal.enclosureId) {
@@ -86,7 +86,7 @@ export default async function MyFamily() {
     });
 
     const animalListItems = noEnclosureAnimals.map(animal => 
-            <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 px-8">
+            <li key={animal.id} className="flex place-content-between items-center gap-4 py-4 px-8">
                 <span><strong><Link href={stringJoin(["/about/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link>: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
                 <form action={deleteAnimal}>
                   <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
@@ -141,6 +141,7 @@ export default async function MyFamily() {
 
     return (
         <>
+            <h1 className="text-4xl text-zinc-600">My Animal Family</h1>
             <ul>
                 {animalListItems}
                 {enclosureAnimalListItems}
