@@ -97,7 +97,7 @@ export default async function AddAnimal() {
     )
 
   return (
-    <main className="flex flex-col items-center justify-center m-auto">
+    <div className="flex flex-col items-center justify-center m-auto">
       <div className="text-4xl text-zinc-600 m-8">Create a Task</div>
       <form action={createTask} className="flex flex-col gap-8">
         <select required defaultValue="default" name="taskSubject" id="taskSubject" className="rounded text-zinc-900 p-0.5">
@@ -115,6 +115,6 @@ export default async function AddAnimal() {
             <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Task</button>
         </div>
       </form>
-    </main>
+    </div>
   )
 }

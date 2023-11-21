@@ -3,6 +3,20 @@ import { authOptions } from '../api/auth/[...nextauth]/route';
 import prisma from '@/util/prisma-client';
 import Link from 'next/link';
 import { TrashIcon } from 'lucide-react';
+import { redirect } from 'next/navigation';
+
+async function deleteTask(data: FormData) {
+    "use server"
+  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
+    const taskId: number = parseInt(data.get("taskId")?.valueOf())
+  
+    await prisma.toDoItem.delete({ 
+        where: {
+          id: taskId
+        }})
+  
+    redirect("/tasks")
+  }
 
 export default async function Tasks() {
     const session = await getServerSession(authOptions)
@@ -64,7 +78,7 @@ export default async function Tasks() {
     const animalTaskItems = animalTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
                 <span><strong><Link href="/">{task.task}</Link>: </strong><span className="text-zinc-500 italic">{task.animalName}</span></span>
-                <form action="">
+                <form action={deleteTask}>
                   <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                   <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
                 </form>
@@ -87,7 +101,7 @@ export default async function Tasks() {
     const enclosureTaskItems = enclosureTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
                 <span><strong><Link href="/">{task.task}</Link>: </strong><span className="text-zinc-500 italic">{task.enclosureName}</span></span>
-                <form action="">
+                <form action={deleteTask}>
                   <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                   <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
                 </form>
@@ -95,12 +109,12 @@ export default async function Tasks() {
     );
 
     return (
-        <div className="text-center">
+        <>
             <div className="text-4xl text-zinc-600">My Tasks</div>
             <ul>
                 {animalTaskItems}
                 {enclosureTaskItems}
             </ul>
-        </div>
+        </>
     )
 }

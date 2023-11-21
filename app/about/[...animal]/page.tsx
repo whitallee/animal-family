@@ -30,10 +30,13 @@ export default async function AboutAnimal ({params: { animal }}: {params: {anima
     const userObject = await prisma.user.findFirst({
         where: {
             email: email
+        },
+        include: {
+            Enclosure: true,
         }
     })
 
-    //console.log(animalObject, userObject);
+    const enclosureName: string | undefined = userObject?.Enclosure.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
 
     if (userObject?.id !== animalObject?.userId) {
         return (
@@ -45,7 +48,7 @@ export default async function AboutAnimal ({params: { animal }}: {params: {anima
         <div className="text-center">
             <h1 className="text-xl">{animalObject?.name}</h1>
             <h2 className="text-zinc-500 italic">{animalObject?.species}</h2>
-            {animalObject?.enclosureId ? <h2>In Enclosure {animalObject.enclosureId}</h2>: ""}
+            {animalObject?.enclosureId ? <h2>Lives in {enclosureName} </h2>: ""}
         </div>
     )
 }
