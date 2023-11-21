@@ -3,6 +3,8 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 import prisma from "@/util/prisma-client";
 import { redirect } from "next/navigation";
 import { TrashIcon } from "lucide-react";
+import Link from "next/link";
+import { stringJoin } from "@/lib/utils";
 
 async function deleteAnimal(data: FormData) {
   "use server"
@@ -71,7 +73,7 @@ export default async function MyFamily() {
         }
     })
 
-    //creating empty arrays for sperating enclosure and non-enclosure animals
+    //creating non-enclosure array
     let noEnclosureAnimals: {id: number, name: string, species: string}[] = []
     userAnimalsEnclosures?.animals.forEach(animal => {
         if (!animal.enclosureId) {
@@ -84,8 +86,8 @@ export default async function MyFamily() {
     });
 
     const animalListItems = noEnclosureAnimals.map(animal => 
-            <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <span><strong>{animal.name}: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
+            <li key={animal.id} className="flex place-content-between items-center gap-4 py-4 px-8">
+                <span><strong><Link href={stringJoin(["/about/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link>: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
                 <form action={deleteAnimal}>
                   <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
                   <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
@@ -108,7 +110,7 @@ export default async function MyFamily() {
     const enclosureAnimalListItems = enclosureAnimals.map(enclosure =>
             <li key={enclosure.id} className="border-solid border-zinc-500 border-2 rounded-xl m-4">
                 <div className="flex gap-2 items-center pt-2 pl-4">
-                    <strong>{enclosure.name}</strong>
+                    <strong><Link href={stringJoin(["/about-enclosure/", enclosure.name.toString(), "/", enclosure.id.toString()])}>{enclosure.name}</Link></strong>
                     <form action={deleteEnclosure}>
                     <input type="hidden" id="enclosureId" name="enclosureId" value={enclosure.id}/>
                     <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
@@ -118,7 +120,7 @@ export default async function MyFamily() {
                 <ul>
                     {enclosure.enclosureAnimalList.map(animal =>
                         <li key={animal.id} className="flex place-content-between items-center gap-8 py-4 pr-4 pl-8">
-                        <span>{animal.name}: <span className="text-zinc-500 italic">{animal.species}</span></span>
+                        <span><Link href={stringJoin(["/about/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link>: <span className="text-zinc-500 italic">{animal.species}</span></span>
                         <form action={deleteAnimal}>
                           <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
                           <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
@@ -139,6 +141,7 @@ export default async function MyFamily() {
 
     return (
         <>
+            <h1 className="text-4xl text-zinc-600">My Animal Family</h1>
             <ul>
                 {animalListItems}
                 {enclosureAnimalListItems}
