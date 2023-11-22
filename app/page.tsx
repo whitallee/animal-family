@@ -5,6 +5,16 @@ import { redirect } from "next/navigation";
 import { TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { stringJoin } from "@/lib/utils";
+import { MoreVerticalIcon } from "lucide-react";
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
 
 async function deleteAnimal(data: FormData) {
   "use server"
@@ -88,10 +98,21 @@ export default async function MyFamily() {
     const animalListItems = noEnclosureAnimals.map(animal => 
             <li key={animal.id} className="flex place-content-between items-center gap-4 py-4 px-8">
                 <span><strong><Link href={stringJoin(["/about/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link>: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
-                <form action={deleteAnimal}>
-                  <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
-                  <button type="submit" className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><TrashIcon className="h-4"/></button>
-                </form>
+                <div className="flex">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel><span className="">Edit {animal.name}</span></DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <form action={deleteAnimal}>
+                                    <input type="hidden" id="animalId" name="animalId" value={animal.id}/>
+                                    <button type="submit" className="rounded flex items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
+                                </form>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </li>
         );
 
