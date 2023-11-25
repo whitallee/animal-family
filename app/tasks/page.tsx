@@ -91,7 +91,7 @@ export default async function Tasks() {
     });
     const animalTaskItems = animalTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <span><strong><Link href="/">{task.task}</Link>: </strong><span className="text-zinc-500 italic">{task.animalName}</span></span>
+                <span><strong><Link href="/">{task.task}</Link></strong><span className="text-zinc-500 italic"> - {task.animalName}</span></span>
                 <div className="flex">
                     <DropdownMenu>
                         <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
@@ -125,7 +125,7 @@ export default async function Tasks() {
     });
     const enclosureTaskItems = enclosureTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <span><strong><Link href="/">{task.task}</Link>: </strong><span className="text-zinc-500 italic">{task.enclosureName}</span></span>
+                <span><strong><Link href="/">{task.task}</Link></strong><span className="text-zinc-500 italic"> - {task.enclosureName}</span></span>
                 <div className="">
                     <DropdownMenu>
                         <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>

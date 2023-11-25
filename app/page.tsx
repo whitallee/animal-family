@@ -117,7 +117,7 @@ export default async function MyFamily() {
 
     const animalListItems = noEnclosureAnimals.map(animal => 
             <li key={animal.id} className="flex place-content-between items-center gap-4 py-3 px-8">
-                <span><strong><Link href={stringJoin(["/about/animal/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link>: </strong><span className="text-zinc-500 italic">{animal.species}</span></span>
+                <span><strong><Link href={stringJoin(["/about/animal/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link></strong><span className="text-zinc-500 italic"> - {animal.species}</span></span>
                 <div className="flex">
                     <DropdownMenu>
                         <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
@@ -178,7 +178,7 @@ export default async function MyFamily() {
                 <ul>
                     {enclosure.enclosureAnimalList.map(animal =>
                         <li key={animal.id} className="flex place-content-between items-center gap-8 py-3 pr-4 pl-8">
-                        <span><Link href={stringJoin(["/about/animal/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link>: <span className="text-zinc-500 italic">{animal.species}</span></span>
+                        <span><Link href={stringJoin(["/about/animal/", animal.name.toString(), "/", animal.id.toString()])}>{animal.name}</Link><span className="text-zinc-500 italic"> - {animal.species}</span></span>
                         <div className="flex">
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
