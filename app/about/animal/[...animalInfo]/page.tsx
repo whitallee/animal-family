@@ -10,8 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
-import { MoreVerticalIcon } from "lucide-react";
-import { TrashIcon } from "lucide-react";
+import { MoreVerticalIcon, TrashIcon, EditIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import { stringJoin } from "@/lib/utils";
 
@@ -99,6 +98,9 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
                         <DropdownMenuLabel><span>Edit Task</span></DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
+                            <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<EditIcon className="h-4"/></Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
                             <form action={deleteTask} className="w-full">
                                 <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                                 <input type="hidden" id="animalName" name="animalName" value={animalObject.name}/>
@@ -135,8 +137,6 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
         </li>
     )
 
-    //const enclosureName: string | undefined = userObject?.Enclosure.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
-
     if (userObject?.id !== animalObject?.userId) {
         return (
             <div className="text-center">You are not authorized to view this animal.</div>
@@ -148,6 +148,7 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
             <h1 className="text-xl">{animalObject?.name}</h1>
             <h2 className="text-zinc-500 italic">{animalObject?.species}</h2>
             {animalObject?.enclosureId ? <h2 className="text-zinc-500 italic">Lives in {enclosureName}</h2>: ""}
+            <h2 className={(animalTasks?.length || enclosureTasks?.length) ? "text-zinc-500 italic mt-10" : "hidden"}>{animalObject.name}'s Tasks</h2>
             <ul>
                 {animalTaskItems}
                 {enclosureTaskItems}
