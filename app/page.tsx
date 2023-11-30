@@ -153,7 +153,7 @@ export default async function MyFamily() {
 
     const enclosureAnimalListItems = enclosureAnimals.map(enclosure =>
             <li key={enclosure.id} className="border-solid border-zinc-500 border-2 rounded-xl m-4">
-                <div className="flex gap-2 items-center pt-2 pl-4">
+                <div className="flex justify-between items-center pt-2 px-4">
                     <strong><Link href={stringJoin(["/about/enclosure/", enclosure.name.toString(), "/", enclosure.id.toString()])}>{enclosure.name}</Link></strong>
                     <div className="flex">
                             <DropdownMenu>
