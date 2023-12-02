@@ -144,7 +144,7 @@ export default async function Tasks() {
             <div className='flex items-center opacity-50'>
                 <CheckSquare className='h-6'/>
             </div>
-            <s className='opacity-50'><strong>{task.task}</strong><span className="text-zinc-500 italic"> - {task.animalName ? task.animalName : task.enclosureName}</span></s>
+            <s className='opacity-50 flex w-full justify-between'><strong>{task.task}</strong><span className='text-zinc-500 italic px-2'> - </span><span className="text-zinc-500 italic">{task.animalName ? task.animalName : task.enclosureName}</span></s>
             <div className="flex">
                 <DropdownMenu>
                     <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
@@ -154,7 +154,7 @@ export default async function Tasks() {
                         <DropdownMenuItem>
                         <form className='w-full' action={unCompleteTask}>
                             <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                            <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Incomplete<BoxSelectIcon className='h-4'/></button>
+                            <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Incomplete<BoxSelectIcon className='ml-4 h-4'/></button>
                         </form>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
@@ -192,7 +192,7 @@ export default async function Tasks() {
                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                     <button type="submit"><BoxSelectIcon className='h-6'/></button>
                 </form>
-                <span><strong>{task.task}</strong><span className="text-zinc-500 italic"> - {task.animalName}</span></span>
+                <span className='flex w-full justify-between'><strong>{task.task}</strong><span className='text-zinc-500 italic px-2'> - </span><span className="text-zinc-500 italic">{task.animalName}</span></span>
                 <div className="flex">
                     <DropdownMenu>
                         <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
@@ -233,7 +233,7 @@ export default async function Tasks() {
                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                     <button type="submit"><BoxSelectIcon className='h-6'/></button>
                 </form>
-                <span><strong>{task.task}</strong><span className="text-zinc-500 italic"> - {task.enclosureName}</span></span>
+                <span className='flex w-full justify-between'><strong>{task.task}</strong><span className='text-zinc-500 italic px-2'> - </span><span className="text-zinc-500 italic">{task.enclosureName}</span></span>
                 <div>
                     <DropdownMenu>
                         <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
