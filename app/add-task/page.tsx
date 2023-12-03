@@ -19,7 +19,7 @@ async function createTask(data: FormData) {
         },
         include: {
             animals: true,
-            Enclosure: true,
+            enclosures: true,
         }
     })
 
@@ -37,21 +37,23 @@ async function createTask(data: FormData) {
     //check if taskSubject is an animal or enclosure, then add the related subject to the task
     for await (const animal of userAnimalsEnclosures?.animals){
         if (taskSubject === animal.name) {
-            await prisma.toDoItem.create({ data: {
+            await prisma.task.create({ data: {
                 animalId: animal.id,
                 task: taskName,
-                userEmail: email
+                userEmail: email,
+                lastCompleted: new Date()
             }})
             redirect("/tasks")
         }
     }
 
-    for await (const enclosure of userAnimalsEnclosures?.Enclosure){
+    for await (const enclosure of userAnimalsEnclosures?.enclosures){
         if (taskSubject === enclosure.name) {
-            await prisma.toDoItem.create({ data: {
+            await prisma.task.create({ data: {
                 enclosureId: enclosure.id,
                 task: taskName,
-                userEmail: email
+                userEmail: email,
+                lastCompleted: new Date()
             }})
             redirect("/tasks")
         }
@@ -84,7 +86,7 @@ export default async function AddAnimal() {
         },
         include: {
             animals: true,
-            Enclosure: true,
+            enclosures: true,
         }
     })
 
@@ -92,7 +94,7 @@ export default async function AddAnimal() {
             <option className="text-zinc-700" key={animal.name} value={animal.name}>{animal.name}</option>
         )
     
-    const enclosureOptions = userAnimalsEnclosures?.Enclosure.map(enclosure =>
+    const enclosureOptions = userAnimalsEnclosures?.enclosures.map(enclosure =>
         <option className="text-zinc-700" key={enclosure.name} value={enclosure.name}>{enclosure.name}</option>
     )
 

@@ -42,11 +42,11 @@ async function createEnclosure(data: FormData) {
             email: email,
         },
         include: {
-            Enclosure: true,
+            enclosures: true,
     }})
 
     //Redirects if the enclosure name the user chose already exists in their enclosures
-    userEnclosures?.Enclosure.forEach(element => {
+    userEnclosures?.enclosures.forEach(element => {
         if (element.name === enclosureName) {
             console.log("enclosure already exists");
             redirect("/add-enclosure")
@@ -102,7 +102,7 @@ export default async function AddEnclosure() {
         },
         include: {
             animals: true,
-            Enclosure: true
+            enclosures: true
         }
     })
 

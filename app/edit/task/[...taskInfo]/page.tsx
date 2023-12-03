@@ -18,7 +18,7 @@ async function editTaskName (data: FormData) {
         redirect("/")
     }
 
-    await prisma.toDoItem.update({
+    await prisma.task.update({
         data: {
             task: taskName,
         },
@@ -49,7 +49,7 @@ export default async function EditTask ({params: { taskInfo }}: {params: {taskIn
 
     const email: any = session?.user?.email
 
-    const taskObject = await prisma.toDoItem.findFirst({
+    const taskObject = await prisma.task.findFirst({
         where: {
             task: decodeURI(taskInfo[0]),
             id: parseInt(taskInfo[1])
@@ -61,7 +61,7 @@ export default async function EditTask ({params: { taskInfo }}: {params: {taskIn
             email: email
         },
         include: {
-            ToDoItem: true,
+            tasks: true,
         }
     })
 

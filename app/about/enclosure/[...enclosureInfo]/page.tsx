@@ -33,7 +33,7 @@ export default async function AboutEnclosure ({params: { enclosureInfo }}: {para
         },
         include: {
             animals: true,
-            Enclosure: true,
+            enclosures: true,
         }
     })
 

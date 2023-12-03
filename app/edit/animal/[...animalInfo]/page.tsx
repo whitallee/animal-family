@@ -69,12 +69,12 @@ export default async function EditAnimal ({params: { animalInfo }}: {params: {an
             email: email
         },
         include: {
-            Enclosure: true,
+            enclosures: true,
             animals: true,
         }
     })
 
-    const enclosureName: string | undefined = userObject?.Enclosure.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
+    const enclosureName: string | undefined = userObject?.enclosures.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
 
     if (userObject?.id !== animalObject?.userId) {
         return (

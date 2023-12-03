@@ -25,7 +25,7 @@ async function deleteTask(data: FormData) {
     const session = await getServerSession(authOptions)
     const email: any = session?.user?.email
   
-    await prisma.toDoItem.delete({ 
+    await prisma.task.delete({ 
         where: {
           id: taskId,
           userEmail: email
@@ -68,12 +68,12 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
             email: email
         },
         include: {
-            Enclosure: true,
-            ToDoItem: true,
+            enclosures: true,
+            tasks: true,
         }
     })
 
-    const animalTasks = userObject?.ToDoItem.filter(task => task.animalId === animalObject.id)
+    const animalTasks = userObject?.tasks.filter(task => task.animalId === animalObject.id)
 
     let enclosureTasks: {
         id: number;
@@ -85,7 +85,7 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
     }[] | undefined
 
     if (animalObject?.enclosureId) {
-        enclosureTasks = userObject?.ToDoItem.filter(task => task.enclosureId === animalObject.enclosureId)
+        enclosureTasks = userObject?.tasks.filter(task => task.enclosureId === animalObject.enclosureId)
     }
 
     const animalTaskItems = animalTasks?.map(task => 
@@ -114,7 +114,7 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
         </li>
     )
 
-    const enclosureName: string | undefined = userObject?.Enclosure.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
+    const enclosureName: string | undefined = userObject?.enclosures.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
 
     const enclosureTaskItems = enclosureTasks?.map(task => 
         <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">

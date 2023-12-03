@@ -61,7 +61,7 @@ export default async function EditEnclosure ({params: { enclosureInfo }}: {param
             email: email
         },
         include: {
-            Enclosure: true,
+            enclosures: true,
             animals: true,
         }
     })

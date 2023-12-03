@@ -99,7 +99,7 @@ export default async function MyFamily() {
         },
         include: {
             animals: true,
-            Enclosure: true,
+            enclosures: true,
         }
     })
 
@@ -141,7 +141,7 @@ export default async function MyFamily() {
 
     //creating enclosure array with animals attached
     let enclosureAnimals: {id: number, name: string, enclosureAnimalList: {id: number, name: string, species: string}[]}[] = []
-    userAnimalsEnclosures?.Enclosure?.forEach(enclosure => {
+    userAnimalsEnclosures?.enclosures?.forEach(enclosure => {
          let enclosureFamily = userAnimalsEnclosures.animals.filter((animal) => animal.enclosureId === enclosure.id)
          let enclosureObject = {
             id: enclosure.id,

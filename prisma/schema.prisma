@@ -41,9 +41,9 @@ model User {
   image         String?
   accounts      Account[]
   animals       Animal[]
-  Enclosure     Enclosure[]
+  enclosures    Enclosure[]
   sessions      Session[]
-  ToDoItem      ToDoItem[]
+  tasks         Task[]
 }
 
 model VerificationToken {
@@ -60,28 +60,30 @@ model Animal {
   species     String
   userId      String
   enclosureId Int?
+  tasks       Task[]
   enclosure   Enclosure? @relation(fields: [enclosureId], references: [id]) //might need an enclosure relation
   User        User       @relation(fields: [userId], references: [id]) //NEEDS a user relation
-  toDos       ToDoItem[]
 }
 
 model Enclosure {
   id        Int        @id @default(autoincrement())
   name      String
   userEmail String
+  tasks     Task[]
   animals   Animal[]
   User      User       @relation(fields: [userEmail], references: [email]) //NEEDS a user relation
-  toDos     ToDoItem[]
 }
 
-model ToDoItem {
-  id          Int        @id @default(autoincrement())
-  enclosureId Int?
-  animalId    Int?
-  task        String
-  complete    Boolean    @default(false)
-  userEmail   String
-  animal      Animal?    @relation(fields: [animalId], references: [id])
-  enclosure   Enclosure? @relation(fields: [enclosureId], references: [id])
-  User        User       @relation(fields: [userEmail], references: [email])
+model Task {
+  id                Int        @id @default(autoincrement())
+  enclosureId       Int?
+  animalId          Int?
+  task              String
+  complete          Boolean    @default(false)
+  userEmail         String
+  lastCompleted     DateTime
+  repeatDayInterval Int?
+  animal            Animal?    @relation(fields: [animalId], references: [id])
+  enclosure         Enclosure? @relation(fields: [enclosureId], references: [id])
+  User              User       @relation(fields: [userEmail], references: [email])
 }
