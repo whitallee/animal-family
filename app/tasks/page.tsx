@@ -22,7 +22,7 @@ async function deleteTask(data: FormData) {
     const session = await getServerSession(authOptions)
     const email: any = session?.user?.email
   
-    await prisma.toDoItem.delete({ 
+    await prisma.task.delete({ 
         where: {
           id: taskId,
           userEmail: email
@@ -38,7 +38,7 @@ async function deleteTask(data: FormData) {
     const session = await getServerSession(authOptions)
     const email: any = session?.user?.email
   
-    await prisma.toDoItem.update({
+    await prisma.task.update({
         data: {
             complete: true,
         },
@@ -57,7 +57,7 @@ async function deleteTask(data: FormData) {
     const session = await getServerSession(authOptions)
     const email: any = session?.user?.email
   
-    await prisma.toDoItem.update({ 
+    await prisma.task.update({ 
         data: {
             complete: false,
         },
@@ -95,12 +95,12 @@ export default async function Tasks() {
         },
         include: {
             animals: true,
-            Enclosure: true,
-            ToDoItem: true,
+            enclosures: true,
+            tasks: true,
         }
     })
 
-    if (userTasksAnimalsEnclosures?.ToDoItem.length === 0) {
+    if (userTasksAnimalsEnclosures?.tasks.length === 0) {
         return (
             <>
                 <div className="text-center">You have no tasks.</div>
@@ -115,7 +115,7 @@ export default async function Tasks() {
 
     //Completed Tasks
     let completedTasks: {id: number, task: string, animalName: string | undefined, animalId: number | null, enclosureName: string | undefined, enclosureId: number | null, complete: boolean}[] = []
-    userTasksAnimalsEnclosures?.ToDoItem.filter(task => (task.complete)).forEach(task => {
+    userTasksAnimalsEnclosures?.tasks.filter(task => (task.complete)).forEach(task => {
         if (task.animalId) {
             completedTasks.push({
                 id: task.id,
@@ -133,7 +133,7 @@ export default async function Tasks() {
                 task: task.task,
                 animalName: undefined,
                 animalId: null,
-                enclosureName: userTasksAnimalsEnclosures.Enclosure.find(enclosure => enclosure.id === task.enclosureId)?.name,
+                enclosureName: userTasksAnimalsEnclosures.enclosures.find(enclosure => enclosure.id === task.enclosureId)?.name,
                 enclosureId: task.enclosureId,
                 complete: task.complete
             })
@@ -175,7 +175,7 @@ export default async function Tasks() {
 
     //Animal Tasks
     let animalTasks: {id: number, task: string, animalName: string | undefined, animalId: number, complete: boolean}[] = []
-    userTasksAnimalsEnclosures?.ToDoItem.filter(task => (!!!task.complete)).forEach(task => {
+    userTasksAnimalsEnclosures?.tasks.filter(task => (!!!task.complete)).forEach(task => {
         if (task.animalId) {
             animalTasks.push({
                 id: task.id,
@@ -216,12 +216,12 @@ export default async function Tasks() {
 
     //Enclosure Tasks
     let enclosureTasks: {id: number, task: string, enclosureName: string | undefined, enclosureId: number, complete: boolean}[] = []
-    userTasksAnimalsEnclosures?.ToDoItem.filter(task => (!!!task.complete)).forEach(task => {
+    userTasksAnimalsEnclosures?.tasks.filter(task => (!!!task.complete)).forEach(task => {
         if (task.enclosureId) {
             enclosureTasks.push({
                 id: task.id,
                 task: task.task,
-                enclosureName: userTasksAnimalsEnclosures.Enclosure.find(enclosure => enclosure.id === task.enclosureId)?.name,
+                enclosureName: userTasksAnimalsEnclosures.enclosures.find(enclosure => enclosure.id === task.enclosureId)?.name,
                 enclosureId: task.enclosureId,
                 complete: task.complete
             })
