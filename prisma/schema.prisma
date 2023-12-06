@@ -83,6 +83,7 @@ model Task {
   userEmail         String
   lastCompleted     DateTime
   repeatDayInterval Int?
+  phoneNumber       String?
   animal            Animal?    @relation(fields: [animalId], references: [id])
   enclosure         Enclosure? @relation(fields: [enclosureId], references: [id])
   User              User       @relation(fields: [userEmail], references: [email])
