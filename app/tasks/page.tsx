@@ -148,7 +148,7 @@ export default async function Tasks() {
             <s className='opacity-50 flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center justify-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.animalName ? task.animalName : task.enclosureName}</span></s>
             <div className="flex">
                 <DropdownMenu>
-                    <DropdownMenuTrigger className="rounded aspect-square pr-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                    <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel><span className="">Edit {task.animalName ? task.animalName : task.enclosureName}'s Task</span></DropdownMenuLabel>
                         <DropdownMenuSeparator />
@@ -196,7 +196,7 @@ export default async function Tasks() {
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.animalName}</span></span>
                 <div className="flex">
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="rounded aspect-square pr-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuLabel><span className="">Edit {task.animalName}'s Task</span></DropdownMenuLabel>
                             <DropdownMenuSeparator />
@@ -237,7 +237,7 @@ export default async function Tasks() {
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.enclosureName}</span></span>
                 <div>
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="rounded aspect-square pr-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuLabel><span className="">Edit {task.enclosureName}'s Task</span></DropdownMenuLabel>
                             <DropdownMenuSeparator />
