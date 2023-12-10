@@ -1,11 +1,11 @@
 {
     "crons": [
         {
-            "path": "https://animal-family.vercel.app/api/tasks/check-completion",
+            "path": "/api/tasks/check-completion",
             "schedule": "0 3 * * *"
         },
         {
-            "path": "https://animal-family.vercel.app/api/tasks/check-completion",
+            "path": "/api/tasks/check-completion",
             "schedule": "0 15 * * *"
         }
     ]

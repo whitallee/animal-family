@@ -5,10 +5,6 @@ const SINCH_NUMBER = '+12085686709';
 import prisma from "@/util/prisma-client"
 import fetch from 'node-fetch';
 
-// export async function GET(request: Request, { params }: { params: { slug: string } }) {
-    
-// }
-
 
 export async function GET (request: Request, {params: { textInfo }}: { params: {textInfo: string }}) {
     const taskObject = await prisma.task.findFirst({
@@ -17,7 +13,7 @@ export async function GET (request: Request, {params: { textInfo }}: { params: {
             phoneNumber: decodeURI(textInfo[1])
         }
     })
-    console.log(textInfo); //LOG
+    //console.log(textInfo); //LOG
     let subjectName;
     if (taskObject?.animalId) {
         const animal = await prisma.animal.findFirst({where: {id: taskObject.animalId}});
