@@ -184,7 +184,7 @@ export default async function Tasks() {
                                 </DropdownMenuItem>
                                 <DropdownMenuItem disabled>
                                     {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' and 'task.lastCompleted?.getDay()' could be 'undefined' */}
-                                    <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(1)} days remaining</div>
+                                    <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
                                 </DropdownMenuItem>
                             </>
                          : 
