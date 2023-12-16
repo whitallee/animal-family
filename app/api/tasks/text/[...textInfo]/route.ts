@@ -5,15 +5,14 @@ const SINCH_NUMBER = '+12085686709';
 import prisma from "@/util/prisma-client"
 import fetch from 'node-fetch';
 
-
 export async function GET (request: Request, {params: { textInfo }}: { params: {textInfo: string }}) {
+  console.log(textInfo); //LOG
     const taskObject = await prisma.task.findFirst({
         where: {
             id: parseInt(decodeURI(textInfo[0])),
             phoneNumber: decodeURI(textInfo[1])
         }
     })
-    //console.log(textInfo); //LOG
     let subjectName;
     if (taskObject?.animalId) {
         const animal = await prisma.animal.findFirst({where: {id: taskObject.animalId}});
@@ -29,17 +28,7 @@ export async function GET (request: Request, {params: { textInfo }}: { params: {
     }
     const TO_NUMBER = taskObject?.phoneNumber
 
-    // const task = await prisma.task.findFirst({
-  //   where: {
-  //     id: 2
-  //   }
-  // })
-  // const enclosureId: any = task?.enclosureId
-  // const subject = await prisma.enclosure.findFirst({
-  //   where: {
-  //     id: enclosureId
-  //   }
-  // })
+//SINCH SMS API call
   const resp = await fetch(
     'https://us.sms.api.sinch.com/xms/v1/' + SERVICE_PLAN_ID + '/batches',
     {
@@ -58,5 +47,5 @@ export async function GET (request: Request, {params: { textInfo }}: { params: {
 
   const data = await resp.json();
   console.log(data);
-  return new Response("OK")
+  return new Response("OK");
 }

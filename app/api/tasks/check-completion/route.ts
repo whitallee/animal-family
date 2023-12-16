@@ -18,11 +18,10 @@ export async function GET (request: Request) {
                 })
 
                 console.log(task.task + " is reset");
-                const resp = await fetch(process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber);
-                const data = resp.json;
-                console.log(data);
-            }
-        }
-    }
-    return new Response("OK")
-}
+                console.log(process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber);
+                await fetch((process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber), {method: 'GET', cache: 'no-cache'});
+            };
+        };
+    };
+    return new Response("OK");
+};
