@@ -1,3 +1,7 @@
+const SERVICE_PLAN_ID = '8abfc9af367048d2b86f6a76845d03a7';
+const API_TOKEN = '1b8088b0811945c5b1763559384d961e';
+const SINCH_NUMBER = '+12085686709';
+
 import prisma from "@/util/prisma-client";
 
 export async function GET (request: Request) {
@@ -18,8 +22,40 @@ export async function GET (request: Request) {
                 })
 
                 console.log(task.task + " is reset");
-                console.log(process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber);
-                await fetch((process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber), {method: 'GET', cache: 'no-cache'});
+                //console.log(process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber);
+                //await fetch((process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber), {method: 'GET', cache: 'no-cache'});
+
+                //SINCH SMS API info setup
+                const TO_NUMBER = task.phoneNumber;
+                let subjectName;
+                if (task?.animalId) {
+                    const animal = await prisma.animal.findFirst({where: {id: task.animalId}});
+                    subjectName = animal?.name;
+                }
+                else if (task?.enclosureId) {
+                    const enclosure = await prisma.enclosure.findFirst({where: {id: task.enclosureId}});
+                    subjectName = enclosure?.name;
+                };
+
+                //SINCH SMS API call
+                const resp = await fetch(
+                    'https://us.sms.api.sinch.com/xms/v1/' + SERVICE_PLAN_ID + '/batches',
+                    {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + API_TOKEN
+                    },
+                    body: JSON.stringify({
+                        from: SINCH_NUMBER,
+                        to: [TO_NUMBER],
+                        body: task.task + ": " + subjectName + " - Animal Family"
+                    })
+                    }
+                );
+
+                const data = await resp.json();
+                console.log(data);
             };
         };
     };
