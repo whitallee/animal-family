@@ -3,6 +3,9 @@ const API_TOKEN = '1b8088b0811945c5b1763559384d961e';
 const SINCH_NUMBER = '+12085686709';
 
 import prisma from "@/util/prisma-client";
+import { NextResponse } from "next/server";
+
+export const revalidate = 0;
 
 export async function GET (request: Request) {
     const today = new Date();
@@ -12,16 +15,16 @@ export async function GET (request: Request) {
         if (task.complete && task.repeatDayInterval) {
             const daysPassed = (today.getTime() - task.lastCompleted.getTime())/millisecondsPerDay;
             if (daysPassed >= task.repeatDayInterval) {
-                await prisma.task.update({
-                    data: {
-                        complete: false
-                    },
-                    where: {
-                        id: task.id
-                    }
-                })
+                // await prisma.task.update({
+                //     data: {
+                //         complete: false
+                //     },
+                //     where: {
+                //         id: task.id
+                //     }
+                // })
 
-                console.log(task.task + " is reset");
+                console.log(task.task + " is NOT reset");
                 //console.log(process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber);
                 //await fetch((process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber), {method: 'GET', cache: 'no-cache'});
 
@@ -59,5 +62,5 @@ export async function GET (request: Request) {
             };
         };
     };
-    return new Response("OK");
+    return NextResponse.json('OK');
 };
