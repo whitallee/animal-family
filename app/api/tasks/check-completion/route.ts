@@ -15,18 +15,16 @@ export async function GET (request: Request) {
         if (task.complete && task.repeatDayInterval) {
             const daysPassed = (today.getTime() - task.lastCompleted.getTime())/millisecondsPerDay;
             if (daysPassed >= task.repeatDayInterval) {
-                // await prisma.task.update({
-                //     data: {
-                //         complete: false
-                //     },
-                //     where: {
-                //         id: task.id
-                //     }
-                // })
+                await prisma.task.update({
+                    data: {
+                        complete: false
+                    },
+                    where: {
+                        id: task.id
+                    }
+                })
 
-                console.log(task.task + " is NOT reset");
-                //console.log(process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber);
-                //await fetch((process.env.BASE_URL + '/api/tasks/text/' + task.id + '/' + task.phoneNumber), {method: 'GET', cache: 'no-cache'});
+                console.log(task.task + " is reset");
 
                 //SINCH SMS API info setup
                 const TO_NUMBER = task.phoneNumber;

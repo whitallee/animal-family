@@ -2,6 +2,10 @@
     "crons": [
         {
             "path": "/api/tasks/check-completion",
+            "schedule": "0 3 * * *"
+        },
+        {
+            "path": "/api/tasks/check-completion",
             "schedule": "0 21 * * *"
         }
     ]
