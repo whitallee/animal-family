@@ -115,7 +115,7 @@ export default async function Tasks() {
     }
 
     //Completed Tasks
-    let completedTasks: {id: number, task: string, animalName: string | undefined, animalId: number | null, enclosureName: string | undefined, enclosureId: number | null, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null}[] = []
+    let completedTasks: {id: number, task: string, animalName: string | undefined, animalId: number | null, enclosureName: string | undefined, enclosureId: number | null, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null, textEnabled: boolean}[] = []
     userTasksAnimalsEnclosures?.tasks.filter(task => (task.complete)).forEach(task => {
         if (task.animalId) {
             completedTasks.push({
@@ -127,7 +127,8 @@ export default async function Tasks() {
                 enclosureId: null,
                 complete: task.complete,
                 repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted
+                lastCompleted: task.lastCompleted,
+                textEnabled: task.textEnabled
             })
         }
         if (task.enclosureId) {
@@ -140,7 +141,8 @@ export default async function Tasks() {
                 enclosureId: task.enclosureId,
                 complete: task.complete,
                 repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted
+                lastCompleted: task.lastCompleted,
+                textEnabled: task.textEnabled
             })
         }
     });
@@ -172,7 +174,7 @@ export default async function Tasks() {
                                 <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
                             </form>
                         </DropdownMenuItem>
-                        {task.repeatInterval ? 
+                        {task.repeatInterval && task.textEnabled ? 
                             <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem disabled>
@@ -186,8 +188,29 @@ export default async function Tasks() {
                                     {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' and 'task.lastCompleted?.getDay()' could be 'undefined' */}
                                     <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
                                 </DropdownMenuItem>
+                                <DropdownMenuItem disabled>
+                                    <div className='w-full'>Texting enabled</div>
+                                </DropdownMenuItem>
                             </>
-                         : 
+                         : task.repeatInterval && !!!task.textEnabled ?
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem disabled>
+                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
+                                    <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem disabled>
+                                    <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem disabled>
+                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' and 'task.lastCompleted?.getDay()' could be 'undefined' */}
+                                    <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem disabled>
+                                    <div className='w-full'>Texting disabled</div>
+                                </DropdownMenuItem>
+                            </>
+                        :
                             <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem disabled>
@@ -203,7 +226,7 @@ export default async function Tasks() {
 
 
     //Animal Tasks
-    let animalTasks: {id: number, task: string, animalName: string | undefined, animalId: number, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null}[] = []
+    let animalTasks: {id: number, task: string, animalName: string | undefined, animalId: number, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null, textEnabled: boolean}[] = []
     userTasksAnimalsEnclosures?.tasks.filter(task => (!!!task.complete)).forEach(task => {
         if (task.animalId) {
             animalTasks.push({
@@ -213,7 +236,8 @@ export default async function Tasks() {
                 animalId: task.animalId,
                 complete: task.complete,
                 repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted
+                lastCompleted: task.lastCompleted,
+                textEnabled: task.textEnabled
             })
         }
     });
@@ -239,7 +263,7 @@ export default async function Tasks() {
                                     <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
                                 </form>
                             </DropdownMenuItem>
-                            {task.repeatInterval ? 
+                            {task.repeatInterval && task.textEnabled ? 
                                 <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem disabled>
@@ -249,14 +273,31 @@ export default async function Tasks() {
                                     <DropdownMenuItem disabled>
                                         <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
                                     </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        <div className='w-full'>Texting enabled</div>
+                                    </DropdownMenuItem>
                                 </>
-                            : 
-                            <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem disabled>
-                                    <div>This is not a repeating task</div>
-                                </DropdownMenuItem>
-                            </>
+                            : task.repeatInterval && !!!task.textEnabled ?
+                                <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem disabled>
+                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
+                                        <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        <div className='w-full'>Texting disabled</div>
+                                    </DropdownMenuItem>
+                                </>
+                            :
+                                <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem disabled>
+                                        <div>This is not a repeating task</div>
+                                    </DropdownMenuItem>
+                                </>
                             }
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -265,7 +306,7 @@ export default async function Tasks() {
     );
 
     //Enclosure Tasks
-    let enclosureTasks: {id: number, task: string, enclosureName: string | undefined, enclosureId: number, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null}[] = []
+    let enclosureTasks: {id: number, task: string, enclosureName: string | undefined, enclosureId: number, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null, textEnabled: boolean}[] = []
     userTasksAnimalsEnclosures?.tasks.filter(task => (!!!task.complete)).forEach(task => {
         if (task.enclosureId) {
             enclosureTasks.push({
@@ -275,7 +316,8 @@ export default async function Tasks() {
                 enclosureId: task.enclosureId,
                 complete: task.complete,
                 repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted
+                lastCompleted: task.lastCompleted,
+                textEnabled: task.textEnabled
             })
         }
     });
@@ -301,7 +343,7 @@ export default async function Tasks() {
                                     <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
                                 </form>
                             </DropdownMenuItem>
-                            {task.repeatInterval ? 
+                            {task.repeatInterval && task.textEnabled ?
                                 <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem disabled>
@@ -311,14 +353,31 @@ export default async function Tasks() {
                                     <DropdownMenuItem disabled>
                                         <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
                                     </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        <div className='w-full'>Texting enabled</div>
+                                    </DropdownMenuItem>
                                 </>
-                            : 
-                            <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem disabled>
-                                    <div>This is not a repeating task</div>
-                                </DropdownMenuItem>
-                            </>
+                            : task.repeatInterval && task.textEnabled ?
+                                <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem disabled>
+                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
+                                        <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        <div className='w-full'>Texting disabled</div>
+                                    </DropdownMenuItem>
+                                </>
+                            :
+                                <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem disabled>
+                                        <div>This is not a repeating task</div>
+                                    </DropdownMenuItem>
+                                </>
                             }
                         </DropdownMenuContent>
                     </DropdownMenu>
