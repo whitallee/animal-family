@@ -44,6 +44,7 @@ model User {
   enclosures    Enclosure[]
   sessions      Session[]
   tasks         Task[]
+  phoneNumber   String?
 }
 
 model VerificationToken {
@@ -84,6 +85,7 @@ model Task {
   lastCompleted     DateTime
   repeatDayInterval Int?
   phoneNumber       String?
+  textEnabled       Boolean    @default(false)
   animal            Animal?    @relation(fields: [animalId], references: [id])
   enclosure         Enclosure? @relation(fields: [enclosureId], references: [id])
   User              User       @relation(fields: [userEmail], references: [email])

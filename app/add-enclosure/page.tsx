@@ -130,7 +130,7 @@ export default async function AddEnclosure() {
         <form action={createEnclosure} className="flex flex-col gap-4 mx-4">
             <input required autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
             {animalCheckboxList}
-            <div className="flex justify-evenly">
+            <div className="flex justify-evenly pb-4">
                 <Link href=".">Cancel</Link>
                 <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Enclosure</button>
             </div>

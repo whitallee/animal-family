@@ -10,7 +10,7 @@ export const revalidate = 0;
 export async function GET (request: Request) {
     const today = new Date();
     const tasks = await prisma.task.findMany({where: {complete: true}});
-    const millisecondsPerDay = 86400000;
+    const millisecondsPerDay = 1000 * 60 * 60 * 24;
     for await (const task of tasks) {
         if (task.complete && task.repeatDayInterval) {
             const daysPassed = (today.getTime() - task.lastCompleted.getTime())/millisecondsPerDay;
@@ -26,37 +26,40 @@ export async function GET (request: Request) {
 
                 console.log(task.task + " is reset");
 
-                //SINCH SMS API info setup
-                const TO_NUMBER = task.phoneNumber;
-                let subjectName;
-                if (task?.animalId) {
-                    const animal = await prisma.animal.findFirst({where: {id: task.animalId}});
-                    subjectName = animal?.name;
-                }
-                else if (task?.enclosureId) {
-                    const enclosure = await prisma.enclosure.findFirst({where: {id: task.enclosureId}});
-                    subjectName = enclosure?.name;
-                };
-
-                //SINCH SMS API call
-                const resp = await fetch(
-                    'https://us.sms.api.sinch.com/xms/v1/' + SERVICE_PLAN_ID + '/batches',
-                    {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: 'Bearer ' + API_TOKEN
-                    },
-                    body: JSON.stringify({
-                        from: SINCH_NUMBER,
-                        to: [TO_NUMBER],
-                        body: task.task + ": " + subjectName + " - Animal Family"
-                    })
+                //Text each reset task
+                if (task.phoneNumber && task.textEnabled) {
+                    //SINCH SMS API info setup
+                    const TO_NUMBER = task.phoneNumber;
+                    let subjectName;
+                    if (task?.animalId) {
+                        const animal = await prisma.animal.findFirst({where: {id: task.animalId}});
+                        subjectName = animal?.name;
                     }
-                );
+                    else if (task?.enclosureId) {
+                        const enclosure = await prisma.enclosure.findFirst({where: {id: task.enclosureId}});
+                        subjectName = enclosure?.name;
+                    };
 
-                const data = await resp.json();
-                console.log(data);
+                    //SINCH SMS API call
+                    const resp = await fetch(
+                        'https://us.sms.api.sinch.com/xms/v1/' + SERVICE_PLAN_ID + '/batches',
+                        {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer ' + API_TOKEN
+                        },
+                        body: JSON.stringify({
+                            from: SINCH_NUMBER,
+                            to: [TO_NUMBER],
+                            body: task.task + ": " + subjectName + " - Animal Family"
+                        })
+                        }
+                    );
+
+                    const data = await resp.json();
+                    console.log(data);
+                };
             };
         };
     };
