@@ -6,6 +6,10 @@ import { Trash, MoreVertical, SquarePen, BoxSelect, CheckSquare, MessageCircle, 
 import { redirect } from 'next/navigation';
 import { stringJoin } from '@/lib/utils';
 
+import { Poppins } from 'next/font/google'
+ 
+const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -475,7 +479,7 @@ export default async function Tasks() {
 
     return (
         <>
-            <div className="text-4xl text-zinc-600">My Tasks</div>
+            <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Tasks</div></div>
             <ul>
                 {animalTaskItems}
                 {enclosureTaskItems}
