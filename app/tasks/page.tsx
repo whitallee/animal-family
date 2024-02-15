@@ -240,13 +240,23 @@ export default async function Tasks() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem disabled>
                                     {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
-                                    <div className='w-full'>Completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted.getDate()}/{task.lastCompleted.getFullYear()}</div>
+                                    {(((today.getTime() - task.lastCompleted.getTime())/86400000) < 1) ?
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed {(((today.getTime() - task.lastCompleted.getTime())/86400000) * 24).toFixed(0)} hours ago</div>
+                                    //@ts-ignore
+                                    : ((((today.getTime() - task.lastCompleted.getTime())/86400000) >= 1) && (((today.getTime() - task.lastCompleted.getTime())/86400000) < 14)) ?
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed {((today.getTime() - task.lastCompleted.getTime())/86400000).toFixed(0)} days ago</div>
+                                    :
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted.getFullYear()}</div>
+                                    }
                                 </DropdownMenuItem>
                                 <DropdownMenuItem disabled>
                                     <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
+                                {/* <DropdownMenuItem disabled>
+                                     @ts-ignore ignores 'task.lastCompleted' could be 'null'
                                     {((task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)) < 0.5) ? 
                                         //@ts-ignore
                                         <div className='w-full'>{'<'}12 hours remaining</div>
@@ -254,7 +264,7 @@ export default async function Tasks() {
                                         //@ts-ignore
                                         <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
                                     }
-                                </DropdownMenuItem>
+                                </DropdownMenuItem> */}
                             </>
                         :
                             <>
@@ -336,8 +346,18 @@ export default async function Tasks() {
                                 <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
-                                        <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
+                                    {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
+                                    {(((today.getTime() - task.lastCompleted.getTime())/86400000) < 1) ?
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed {(((today.getTime() - task.lastCompleted.getTime())/86400000) * 24).toFixed(0)} hours ago</div>
+                                    //@ts-ignore
+                                    : ((((today.getTime() - task.lastCompleted.getTime())/86400000) >= 1) && (((today.getTime() - task.lastCompleted.getTime())/86400000) < 14)) ?
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed {((today.getTime() - task.lastCompleted.getTime())/86400000).toFixed(0)} days ago</div>
+                                    :
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted.getFullYear()}</div>
+                                    }
                                     </DropdownMenuItem>
                                     <DropdownMenuItem disabled>
                                         <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
@@ -422,8 +442,18 @@ export default async function Tasks() {
                                 <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
-                                        <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
+                                    {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
+                                    {(((today.getTime() - task.lastCompleted.getTime())/86400000) < 1) ?
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed {(((today.getTime() - task.lastCompleted.getTime())/86400000) * 24).toFixed(0)} hours ago</div>
+                                    //@ts-ignore
+                                    : ((((today.getTime() - task.lastCompleted.getTime())/86400000) >= 1) && (((today.getTime() - task.lastCompleted.getTime())/86400000) < 14)) ?
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed {((today.getTime() - task.lastCompleted.getTime())/86400000).toFixed(0)} days ago</div>
+                                    :
+                                        //@ts-ignore
+                                        <div className='w-full'>Last completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted.getFullYear()}</div>
+                                    }
                                     </DropdownMenuItem>
                                     <DropdownMenuItem disabled>
                                         <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
