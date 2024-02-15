@@ -55,7 +55,7 @@ export default async function AddPhone() {
                 {userInfo?.phoneNumber ?
                     <div className='text-center pb-10 max-w-xs text-zinc-500'><span className='text-zinc-100 italic'>{userInfo.phoneNumber}</span> is already connected to your account.</div>
                 :
-                    <></>
+                <div className='text-center pb-10 max-w-xs text-zinc-500'>You do not have a phone number connected, add one below:</div>
                 }
                 <div className='flex pb-10 justify-center'>
                     <label className='pr-2'>Phone Number: </label>

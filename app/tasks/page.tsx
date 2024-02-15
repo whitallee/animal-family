@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../api/auth/[...nextauth]/route';
 import prisma from '@/util/prisma-client';
 import Link from 'next/link';
-import { TrashIcon, MoreVerticalIcon, EditIcon, BoxSelectIcon, CheckSquare } from 'lucide-react';
+import { Trash, MoreVertical, SquarePen, BoxSelect, CheckSquare, MessageCircle, MessageCircleOff} from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { stringJoin } from '@/lib/utils';
 
@@ -29,9 +29,9 @@ async function deleteTask(data: FormData) {
         }})
   
     redirect("/tasks")
-  }
+}
 
-  async function completeTask(data: FormData) {
+async function completeTask(data: FormData) {
     "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
     const taskId: number = parseInt(data.get("taskId")?.valueOf())
@@ -49,9 +49,9 @@ async function deleteTask(data: FormData) {
         }})
   
     redirect("/tasks")
-  }
+}
 
-  async function unCompleteTask(data: FormData) {
+async function unCompleteTask(data: FormData) {
     "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
     const taskId: number = parseInt(data.get("taskId")?.valueOf())
@@ -68,7 +68,51 @@ async function deleteTask(data: FormData) {
         }})
   
     redirect("/tasks")
-  }
+}
+
+async function enableText(data: FormData) {
+    "use server"
+// @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
+    const taskId: number = parseInt(data.get("taskId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
+
+    const userInfo = await prisma.user.findFirst({where: {email: email}});
+    if (!userInfo?.phoneNumber) {
+        redirect("verification/add-phone");
+    }
+
+    await prisma.task.update({ 
+        data: {
+            textEnabled: true,
+        },
+        where: {
+          id: taskId,
+          userEmail: email
+        }});
+  
+    redirect("/tasks");
+};
+
+async function disableText(data: FormData) {
+    "use server"
+  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
+    const taskId: number = parseInt(data.get("taskId")?.valueOf())
+    const session = await getServerSession(authOptions)
+    const email: any = session?.user?.email
+  
+    await prisma.task.update({ 
+        data: {
+            textEnabled: false,
+        },
+        where: {
+          id: taskId,
+          userEmail: email
+        }})
+  
+    redirect("/tasks")
+}
+
 
 export default async function Tasks() {
     const session = await getServerSession(authOptions)
@@ -155,26 +199,43 @@ export default async function Tasks() {
             <s className='opacity-50 flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center justify-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.animalName ? task.animalName : task.enclosureName}</span></s>
             <div className="flex">
                 <DropdownMenu>
-                    <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                    <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel><span className="">Edit {task.animalName ? task.animalName : task.enclosureName}'s Task</span></DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                        <form className='w-full' action={unCompleteTask}>
-                            <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                            <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Incomplete<BoxSelectIcon className='ml-4 h-4'/></button>
-                        </form>
+                            <form className='w-full' action={unCompleteTask}>
+                                <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Incomplete<BoxSelect className='ml-4 h-4'/></button>
+                            </form>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                            <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<EditIcon className="h-4"/></Link>
+                            <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<SquarePen className="h-4"/></Link>
                         </DropdownMenuItem>
+                        {task.repeatInterval && task.textEnabled ?
+                            <DropdownMenuItem>
+                                <form className='w-full' action={disableText}>
+                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Disable Texting<MessageCircleOff className='h-4'/></button>
+                                </form>
+                            </DropdownMenuItem>
+                        : task.repeatInterval && !!!task.textEnabled ?
+                            <DropdownMenuItem>
+                                <form className='w-full' action={enableText}>
+                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Enable Texting<MessageCircle className='h-4'/></button>
+                                </form>
+                            </DropdownMenuItem>
+                        :
+                            <></>
+                        }
                         <DropdownMenuItem>
                             <form action={deleteTask} className="w-full">
                                 <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
+                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<Trash className="h-4"/></button>
                             </form>
                         </DropdownMenuItem>
-                        {task.repeatInterval && task.textEnabled ? 
+                        {task.repeatInterval ? 
                             <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem disabled>
@@ -187,27 +248,6 @@ export default async function Tasks() {
                                 <DropdownMenuItem disabled>
                                     {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' and 'task.lastCompleted?.getDay()' could be 'undefined' */}
                                     <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem disabled>
-                                    <div className='w-full'>Texting enabled</div>
-                                </DropdownMenuItem>
-                            </>
-                         : task.repeatInterval && !!!task.textEnabled ?
-                            <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
-                                    <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem disabled>
-                                    <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' and 'task.lastCompleted?.getDay()' could be 'undefined' */}
-                                    <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem disabled>
-                                    <div className='w-full'>Texting disabled</div>
                                 </DropdownMenuItem>
                             </>
                         :
@@ -245,25 +285,48 @@ export default async function Tasks() {
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
                 <form className='flex items-center' action={completeTask}>
                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                    <button type="submit"><BoxSelectIcon className='h-6'/></button>
+                    <button type="submit"><BoxSelect className='h-6'/></button>
                 </form>
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.animalName}</span></span>
                 <div className="flex">
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuLabel><span className="">Edit {task.animalName}'s Task</span></DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>
-                                <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<EditIcon className="h-4"/></Link>
+                            <form className='w-full' action={completeTask}>
+                                <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Complete<CheckSquare className='h-4'/></button>
+                            </form>
                             </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<SquarePen className="h-4"/></Link>
+                            </DropdownMenuItem>
+                            {task.repeatInterval && task.textEnabled ?
+                                <DropdownMenuItem>
+                                    <form className='w-full' action={disableText}>
+                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Disable Texting<MessageCircleOff className='h-4'/></button>
+                                    </form>
+                                </DropdownMenuItem>
+                            : task.repeatInterval && !!!task.textEnabled ?
+                                <DropdownMenuItem>
+                                    <form className='w-full' action={enableText}>
+                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Enable Texting<MessageCircle className='h-4'/></button>
+                                    </form>
+                                </DropdownMenuItem>
+                            :
+                                <></>
+                            }
                             <DropdownMenuItem>
                                 <form action={deleteTask} className="w-full">
                                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
+                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<Trash className="h-4"/></button>
                                 </form>
                             </DropdownMenuItem>
-                            {task.repeatInterval && task.textEnabled ? 
+                            {task.repeatInterval ? 
                                 <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem disabled>
@@ -272,23 +335,6 @@ export default async function Tasks() {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem disabled>
                                         <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Texting enabled</div>
-                                    </DropdownMenuItem>
-                                </>
-                            : task.repeatInterval && !!!task.textEnabled ?
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
-                                        <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Texting disabled</div>
                                     </DropdownMenuItem>
                                 </>
                             :
@@ -325,25 +371,48 @@ export default async function Tasks() {
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
                 <form className='flex items-center' action={completeTask}>
                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                    <button type="submit"><BoxSelectIcon className='h-6'/></button>
+                    <button type="submit"><BoxSelect className='h-6'/></button>
                 </form>
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.enclosureName}</span></span>
                 <div>
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVerticalIcon className="h-4"/></DropdownMenuTrigger>
+                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuLabel><span className="">Edit {task.enclosureName}'s Task</span></DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>
-                                <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<EditIcon className="h-4"/></Link>
+                                <form className='w-full' action={completeTask}>
+                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Complete<CheckSquare className='h-4'/></button>
+                                </form>
                             </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<SquarePen className="h-4"/></Link>
+                            </DropdownMenuItem>
+                            {task.repeatInterval && task.textEnabled ?
+                                <DropdownMenuItem>
+                                    <form className='w-full' action={disableText}>
+                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Disable Texting<MessageCircleOff className='h-4'/></button>
+                                    </form>
+                                </DropdownMenuItem>
+                            : task.repeatInterval && !!!task.textEnabled ?
+                                <DropdownMenuItem>
+                                    <form className='w-full' action={enableText}>
+                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
+                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Enable Texting<MessageCircle className='h-4'/></button>
+                                    </form>
+                                </DropdownMenuItem>
+                            :
+                                <></>
+                            }
                             <DropdownMenuItem>
                                 <form action={deleteTask} className="w-full">
                                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<TrashIcon className="h-4"/></button>
+                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<Trash className="h-4"/></button>
                                 </form>
                             </DropdownMenuItem>
-                            {task.repeatInterval && task.textEnabled ?
+                            {task.repeatInterval ?
                                 <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem disabled>
@@ -352,23 +421,6 @@ export default async function Tasks() {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem disabled>
                                         <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Texting enabled</div>
-                                    </DropdownMenuItem>
-                                </>
-                            : task.repeatInterval && task.textEnabled ?
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted?.getMonth()' could be 'undefined' */}
-                                        <div className='w-full'>Completed on {task.lastCompleted?.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted?.getFullYear()}</div>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Texting disabled</div>
                                     </DropdownMenuItem>
                                 </>
                             :
