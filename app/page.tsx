@@ -33,6 +33,9 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
+
+  import { Poppins } from 'next/font/google'
+const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
   
   
 
@@ -213,7 +216,7 @@ export default async function MyFamily() {
 
     return (
         <>
-            <h1 className="text-4xl text-zinc-600">My Animal Family</h1>
+            <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Animal Family</div></div>
             <ul>
                 {animalListItems}
                 {enclosureAnimalListItems}

@@ -79,6 +79,7 @@ model Task {
   id                Int        @id @default(autoincrement())
   enclosureId       Int?
   animalId          Int?
+  subjectName       String
   task              String
   complete          Boolean    @default(false)
   userEmail         String

@@ -7,16 +7,16 @@ import { redirect } from "next/navigation";
 async function editEnclosureNameAnimals (data: FormData) {
     "use server"
     const session = await getServerSession(authOptions);
-    const enclosureName = data.get("enclosureName")?.valueOf()
-    const enclosureId = data.get("enclosureId")?.valueOf()
-    const email: any = session?.user?.email
+    const enclosureName = data.get("enclosureName")?.valueOf();
+    const enclosureId = data.get("enclosureId")?.valueOf();
+    const email: any = session?.user?.email;
 
     if (typeof(enclosureName) !== "string" || enclosureName.length === 0) {
         redirect("/")
     }
     else if (typeof(enclosureId) !== "string" || enclosureId.length === 0) {
         redirect("/")
-    }
+    };
 
     await prisma.enclosure.update({
         data: {
@@ -25,7 +25,16 @@ async function editEnclosureNameAnimals (data: FormData) {
         where: {
             id: parseInt(enclosureId)
         }
-    })
+    });
+
+    await prisma.task.updateMany({
+        data: {
+            subjectName: enclosureName
+        },
+        where: {
+            enclosureId: parseInt(enclosureId)
+        }
+    });
 
     redirect("/")
 
@@ -81,7 +90,7 @@ export default async function EditEnclosure ({params: { enclosureInfo }}: {param
                 <input required autoFocus type="text" placeholder="Enclosure Name" defaultValue={enclosureObject?.name} name="enclosureName" className="rounded text-black px-2"></input>
                 <input type="hidden" id="enclosurelId" name="enclosureId" value={enclosureObject?.id.toString()}></input>
                 <div className="flex justify-evenly">
-                    <Link href=".">Cancel</Link>
+                    <Link href="/">Cancel</Link>
                     <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Update Enclosure</button>
                 </div>
             </form>
