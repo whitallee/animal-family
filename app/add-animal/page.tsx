@@ -1,7 +1,7 @@
 import Link from "next/link"
 import prisma from "@/util/prisma-client"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/utils"
 import { redirect } from "next/navigation"
 
 async function createAnimal(data: FormData) {

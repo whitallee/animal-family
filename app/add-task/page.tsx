@@ -1,7 +1,7 @@
 import Link from "next/link"
 import prisma from "@/util/prisma-client"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/utils"
 import { redirect } from "next/navigation" 
 import { InfoIcon } from "lucide-react"
 
@@ -60,6 +60,7 @@ async function createTask(data: FormData) {
             await prisma.task.create({ data: {
                 animalId: animal.id,
                 task: taskName,
+                subjectName: taskSubject,
                 userEmail: email,
                 lastCompleted: new Date(),
                 textEnabled: textOption ? true : false,
@@ -74,6 +75,7 @@ async function createTask(data: FormData) {
         if (taskSubject === enclosure.name) {
             await prisma.task.create({ data: {
                 enclosureId: enclosure.id,
+                subjectName: taskSubject,
                 task: taskName,
                 userEmail: email,
                 lastCompleted: new Date(),

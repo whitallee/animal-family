@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils";
 import prisma from "@/util/prisma-client";
 import { redirect } from "next/navigation";
 import { TrashIcon } from "lucide-react";
@@ -17,22 +17,8 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 
-  //Doesnt work in dropdown
-  import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover"
-
-  //Doesnt work in dropdown
-  import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
+import { Poppins } from 'next/font/google'
+const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
   
   
 
@@ -213,7 +199,7 @@ export default async function MyFamily() {
 
     return (
         <>
-            <h1 className="text-4xl text-zinc-600">My Animal Family</h1>
+            <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Animal Family</div></div>
             <ul>
                 {animalListItems}
                 {enclosureAnimalListItems}

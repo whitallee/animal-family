@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils";
 import prisma from "@/util/prisma-client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 async function editAnimalNameSpecies (data: FormData) {
     "use server"
     const session = await getServerSession(authOptions);
-    const petName = data.get("petName")?.valueOf()
-    const species = data.get("species")?.valueOf()
-    const animalId = data.get("animalId")?.valueOf()
-    const email: any = session?.user?.email
+    const petName = data.get("petName")?.valueOf();
+    const species = data.get("species")?.valueOf();
+    const animalId = data.get("animalId")?.valueOf();
+    const email: any = session?.user?.email;
 
     if (typeof(petName) !== "string" || petName.length === 0) {
         redirect("/")
@@ -20,7 +20,7 @@ async function editAnimalNameSpecies (data: FormData) {
     }
     else if (typeof(animalId) !== "string") {
         redirect("/")
-    }
+    };
 
     await prisma.animal.update({ data: {
         name: petName,
@@ -32,12 +32,18 @@ async function editAnimalNameSpecies (data: FormData) {
         }},
         where: {
             id: parseInt(animalId)
-        }}
-        )
+    }});
 
-    redirect("/")
+    await prisma.task.updateMany({ data: {
+        subjectName: petName,
+    },
+    where: {
+        animalId: parseInt(animalId),
+    }});
 
-}
+    redirect("/");
+
+};
 
 export default async function EditAnimal ({params: { animalInfo }}: {params: {animalInfo: string}}) {
     const session = await getServerSession(authOptions);
@@ -53,16 +59,16 @@ export default async function EditAnimal ({params: { animalInfo }}: {params: {an
                 </form>
             </>
         )
-    }
+    };
 
-    const email: any = session?.user?.email
+    const email: any = session?.user?.email;
 
     const animalObject = await prisma.animal.findFirst({
         where: {
             name: decodeURI(animalInfo[0]),
             id: parseInt(animalInfo[1])
         },
-    })
+    });
 
     const userObject = await prisma.user.findFirst({
         where: {
@@ -72,7 +78,7 @@ export default async function EditAnimal ({params: { animalInfo }}: {params: {an
             enclosures: true,
             animals: true,
         }
-    })
+    });
 
     const enclosureName: string | undefined = userObject?.enclosures.find(enclosure => enclosure.id === animalObject?.enclosureId)?.name
 
@@ -80,7 +86,7 @@ export default async function EditAnimal ({params: { animalInfo }}: {params: {an
         return (
             <div className="text-center">You are not authorized to edit this animal.</div>
         )
-    }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center m-auto">
@@ -90,10 +96,10 @@ export default async function EditAnimal ({params: { animalInfo }}: {params: {an
                 <input required type="text" placeholder="Species" defaultValue={userObject?.animals.find(animal => animal.name === animalObject?.name)?.species} name="species" className="rounded text-black px-2"></input>
                 <input type="hidden" id="animalId" name="animalId" value={animalObject?.id.toString()}></input>
                 <div className="flex justify-evenly">
-                    <Link href=".">Cancel</Link>
+                    <Link href="/">Cancel</Link>
                     <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Update Animal</button>
                 </div>
             </form>
         </div>
     )
-}
+};

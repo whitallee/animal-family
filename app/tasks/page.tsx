@@ -1,125 +1,20 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
 import Link from 'next/link';
-import { Trash, MoreVertical, SquarePen, BoxSelect, CheckSquare, MessageCircle, MessageCircleOff} from 'lucide-react';
-import { redirect } from 'next/navigation';
-import { stringJoin } from '@/lib/utils';
+import { BoxSelect, CheckSquare } from 'lucide-react';
+import { completeTask } from '@/lib/server-actions';
+import TaskMoreInfo from '@/components/TaskMoreInfo';
+import { TaskObjectType } from '@/lib/types';
 
 import { Poppins } from 'next/font/google'
- 
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-
-async function deleteTask(data: FormData) {
-    "use server"
-  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
-  
-    await prisma.task.delete({ 
-        where: {
-          id: taskId,
-          userEmail: email
-        }})
-  
-    redirect("/tasks")
-}
-
-async function completeTask(data: FormData) {
-    "use server"
-  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
-  
-    await prisma.task.update({
-        data: {
-            complete: true,
-            lastCompleted: new Date(),
-        },
-        where: {
-          id: taskId,
-          userEmail: email
-        }})
-  
-    redirect("/tasks")
-}
-
-async function unCompleteTask(data: FormData) {
-    "use server"
-  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
-  
-    await prisma.task.update({ 
-        data: {
-            complete: false,
-        },
-        where: {
-          id: taskId,
-          userEmail: email
-        }})
-  
-    redirect("/tasks")
-}
-
-async function enableText(data: FormData) {
-    "use server"
-// @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf());
-    const session = await getServerSession(authOptions);
-    const email: any = session?.user?.email;
-
-    const userInfo = await prisma.user.findFirst({where: {email: email}});
-    if (!userInfo?.phoneNumber) {
-        redirect("verification/add-phone");
-    }
-
-    await prisma.task.update({ 
-        data: {
-            textEnabled: true,
-        },
-        where: {
-          id: taskId,
-          userEmail: email
-        }});
-  
-    redirect("/tasks");
-};
-
-async function disableText(data: FormData) {
-    "use server"
-  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
-  
-    await prisma.task.update({ 
-        data: {
-            textEnabled: false,
-        },
-        where: {
-          id: taskId,
-          userEmail: email
-        }})
-  
-    redirect("/tasks")
-}
 
 
 export default async function Tasks() {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
 
     if(!session) {
         return (
@@ -134,11 +29,9 @@ export default async function Tasks() {
                 </form>
             </>
         )
-    }
+    };
 
-    const email: any = session?.user?.email
-
-    const userTasksAnimalsEnclosures = await prisma.user.findFirst({
+    const userObject = await prisma.user.findFirst({
         where: {
             email: email
         },
@@ -149,7 +42,7 @@ export default async function Tasks() {
         }
     })
 
-    if (userTasksAnimalsEnclosures?.tasks.length === 0) {
+    if (userObject?.tasks.length === 0) {
         return (
             <>
                 <div className="text-center">You have no tasks.</div>
@@ -163,142 +56,25 @@ export default async function Tasks() {
     }
 
     //Completed Tasks
-    let completedTasks: {id: number, task: string, animalName: string | undefined, animalId: number | null, enclosureName: string | undefined, enclosureId: number | null, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null, textEnabled: boolean}[] = []
-    userTasksAnimalsEnclosures?.tasks.filter(task => (task.complete)).forEach(task => {
-        if (task.animalId) {
-            completedTasks.push({
-                id: task.id,
-                task: task.task,
-                animalName: userTasksAnimalsEnclosures.animals.find(animal => animal.id === task.animalId)?.name,
-                animalId: task.animalId,
-                enclosureName: undefined,
-                enclosureId: null,
-                complete: task.complete,
-                repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted,
-                textEnabled: task.textEnabled
-            })
-        }
-        if (task.enclosureId) {
-            completedTasks.push({
-                id: task.id,
-                task: task.task,
-                animalName: undefined,
-                animalId: null,
-                enclosureName: userTasksAnimalsEnclosures.enclosures.find(enclosure => enclosure.id === task.enclosureId)?.name,
-                enclosureId: task.enclosureId,
-                complete: task.complete,
-                repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted,
-                textEnabled: task.textEnabled
-            })
-        }
-    });
+    let completedTasks: TaskObjectType[] = [];
+    userObject?.tasks.filter(task => (task.complete)).forEach(task => {completedTasks.push(task)});
     const today = new Date;
     const completedTaskItems = completedTasks.map(task => 
         <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
             <div className='flex items-center opacity-50'>
                 <CheckSquare className='h-6'/>
             </div>
-            <s className='opacity-50 flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center justify-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.animalName ? task.animalName : task.enclosureName}</span></s>
-            <div className="flex">
-                <DropdownMenu>
-                    <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuLabel><span className="">Edit {task.animalName ? task.animalName : task.enclosureName}'s Task</span></DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <form className='w-full' action={unCompleteTask}>
-                                <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Incomplete<BoxSelect className='ml-4 h-4'/></button>
-                            </form>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<SquarePen className="h-4"/></Link>
-                        </DropdownMenuItem>
-                        {task.repeatInterval && task.textEnabled ?
-                            <DropdownMenuItem>
-                                <form className='w-full' action={disableText}>
-                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Disable Texting<MessageCircleOff className='h-4'/></button>
-                                </form>
-                            </DropdownMenuItem>
-                        : task.repeatInterval && !!!task.textEnabled ?
-                            <DropdownMenuItem>
-                                <form className='w-full' action={enableText}>
-                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Enable Texting<MessageCircle className='h-4'/></button>
-                                </form>
-                            </DropdownMenuItem>
-                        :
-                            <></>
-                        }
-                        <DropdownMenuItem>
-                            <form action={deleteTask} className="w-full">
-                                <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<Trash className="h-4"/></button>
-                            </form>
-                        </DropdownMenuItem>
-                        {task.repeatInterval ? 
-                            <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
-                                    {(((today.getTime() - task.lastCompleted.getTime())/86400000) < 1) ?
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed {(((today.getTime() - task.lastCompleted.getTime())/86400000) * 24).toFixed(0)} hours ago</div>
-                                    //@ts-ignore
-                                    : ((((today.getTime() - task.lastCompleted.getTime())/86400000) >= 1) && (((today.getTime() - task.lastCompleted.getTime())/86400000) < 14)) ?
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed {((today.getTime() - task.lastCompleted.getTime())/86400000).toFixed(0)} days ago</div>
-                                    :
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted.getFullYear()}</div>
-                                    }
-                                </DropdownMenuItem>
-                                <DropdownMenuItem disabled>
-                                    <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                </DropdownMenuItem>
-                                {/* <DropdownMenuItem disabled>
-                                     @ts-ignore ignores 'task.lastCompleted' could be 'null'
-                                    {((task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)) < 0.5) ? 
-                                        //@ts-ignore
-                                        <div className='w-full'>{'<'}12 hours remaining</div>
-                                    :
-                                        //@ts-ignore
-                                        <div className='w-full'>{(task.repeatInterval - ((today.getTime() - task.lastCompleted.getTime())/86400000)).toFixed(0)} days remaining</div>
-                                    }
-                                </DropdownMenuItem> */}
-                            </>
-                        :
-                            <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem disabled>
-                                    <div>This is not a repeating task</div>
-                                </DropdownMenuItem>
-                            </>
-                        }
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
+            <s className='opacity-50 flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center justify-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></s>
+            <TaskMoreInfo taskObject={task} />
         </li>
     );
 
 
     //Animal Tasks
-    let animalTasks: {id: number, task: string, animalName: string | undefined, animalId: number, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null, textEnabled: boolean}[] = []
-    userTasksAnimalsEnclosures?.tasks.filter(task => (!!!task.complete)).forEach(task => {
+    let animalTasks: TaskObjectType[] = []
+    userObject?.tasks.filter(task => (!!!task.complete)).forEach(task => {
         if (task.animalId) {
-            animalTasks.push({
-                id: task.id,
-                task: task.task,
-                animalName: userTasksAnimalsEnclosures.animals.find(animal => animal.id === task.animalId)?.name,
-                animalId: task.animalId,
-                complete: task.complete,
-                repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted,
-                textEnabled: task.textEnabled
-            })
+            animalTasks.push(task)
         }
     });
     const animalTaskItems = animalTasks.map(task => 
@@ -307,94 +83,16 @@ export default async function Tasks() {
                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                     <button type="submit"><BoxSelect className='h-6'/></button>
                 </form>
-                <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.animalName}</span></span>
-                <div className="flex">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel><span className="">Edit {task.animalName}'s Task</span></DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                            <form className='w-full' action={completeTask}>
-                                <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Complete<CheckSquare className='h-4'/></button>
-                            </form>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<SquarePen className="h-4"/></Link>
-                            </DropdownMenuItem>
-                            {task.repeatInterval && task.textEnabled ?
-                                <DropdownMenuItem>
-                                    <form className='w-full' action={disableText}>
-                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Disable Texting<MessageCircleOff className='h-4'/></button>
-                                    </form>
-                                </DropdownMenuItem>
-                            : task.repeatInterval && !!!task.textEnabled ?
-                                <DropdownMenuItem>
-                                    <form className='w-full' action={enableText}>
-                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Enable Texting<MessageCircle className='h-4'/></button>
-                                    </form>
-                                </DropdownMenuItem>
-                            :
-                                <></>
-                            }
-                            <DropdownMenuItem>
-                                <form action={deleteTask} className="w-full">
-                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<Trash className="h-4"/></button>
-                                </form>
-                            </DropdownMenuItem>
-                            {task.repeatInterval ? 
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
-                                    {(((today.getTime() - task.lastCompleted.getTime())/86400000) < 1) ?
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed {(((today.getTime() - task.lastCompleted.getTime())/86400000) * 24).toFixed(0)} hours ago</div>
-                                    //@ts-ignore
-                                    : ((((today.getTime() - task.lastCompleted.getTime())/86400000) >= 1) && (((today.getTime() - task.lastCompleted.getTime())/86400000) < 14)) ?
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed {((today.getTime() - task.lastCompleted.getTime())/86400000).toFixed(0)} days ago</div>
-                                    :
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted.getFullYear()}</div>
-                                    }
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                    </DropdownMenuItem>
-                                </>
-                            :
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem disabled>
-                                        <div>This is not a repeating task</div>
-                                    </DropdownMenuItem>
-                                </>
-                            }
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></span>
+                <TaskMoreInfo taskObject={task} />
             </li>
     );
 
     //Enclosure Tasks
-    let enclosureTasks: {id: number, task: string, enclosureName: string | undefined, enclosureId: number, complete: boolean, repeatInterval: number | null, lastCompleted: Date | null, textEnabled: boolean}[] = []
-    userTasksAnimalsEnclosures?.tasks.filter(task => (!!!task.complete)).forEach(task => {
+    let enclosureTasks: TaskObjectType[] = []
+    userObject?.tasks.filter(task => (!!!task.complete)).forEach(task => {
         if (task.enclosureId) {
-            enclosureTasks.push({
-                id: task.id,
-                task: task.task,
-                enclosureName: userTasksAnimalsEnclosures.enclosures.find(enclosure => enclosure.id === task.enclosureId)?.name,
-                enclosureId: task.enclosureId,
-                complete: task.complete,
-                repeatInterval: task.repeatDayInterval,
-                lastCompleted: task.lastCompleted,
-                textEnabled: task.textEnabled
-            })
+            enclosureTasks.push(task)
         }
     });
     const enclosureTaskItems = enclosureTasks.map(task => 
@@ -403,77 +101,8 @@ export default async function Tasks() {
                     <input type="hidden" id="taskId" name="taskId" value={task.id}/>
                     <button type="submit"><BoxSelect className='h-6'/></button>
                 </form>
-                <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.enclosureName}</span></span>
-                <div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel><span className="">Edit {task.enclosureName}'s Task</span></DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <form className='w-full' action={completeTask}>
-                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Complete<CheckSquare className='h-4'/></button>
-                                </form>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", task.task, "/", task.id.toString()])}>Edit<SquarePen className="h-4"/></Link>
-                            </DropdownMenuItem>
-                            {task.repeatInterval && task.textEnabled ?
-                                <DropdownMenuItem>
-                                    <form className='w-full' action={disableText}>
-                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Disable Texting<MessageCircleOff className='h-4'/></button>
-                                    </form>
-                                </DropdownMenuItem>
-                            : task.repeatInterval && !!!task.textEnabled ?
-                                <DropdownMenuItem>
-                                    <form className='w-full' action={enableText}>
-                                        <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                        <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Enable Texting<MessageCircle className='h-4'/></button>
-                                    </form>
-                                </DropdownMenuItem>
-                            :
-                                <></>
-                            }
-                            <DropdownMenuItem>
-                                <form action={deleteTask} className="w-full">
-                                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                                    <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Remove<Trash className="h-4"/></button>
-                                </form>
-                            </DropdownMenuItem>
-                            {task.repeatInterval ?
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem disabled>
-                                    {/* @ts-ignore ignores 'task.lastCompleted' could be 'null' */}
-                                    {(((today.getTime() - task.lastCompleted.getTime())/86400000) < 1) ?
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed {(((today.getTime() - task.lastCompleted.getTime())/86400000) * 24).toFixed(0)} hours ago</div>
-                                    //@ts-ignore
-                                    : ((((today.getTime() - task.lastCompleted.getTime())/86400000) >= 1) && (((today.getTime() - task.lastCompleted.getTime())/86400000) < 14)) ?
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed {((today.getTime() - task.lastCompleted.getTime())/86400000).toFixed(0)} days ago</div>
-                                    :
-                                        //@ts-ignore
-                                        <div className='w-full'>Last completed on {task.lastCompleted.getMonth() + 1}/{task.lastCompleted?.getDate()}/{task.lastCompleted.getFullYear()}</div>
-                                    }
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem disabled>
-                                        <div className='w-full'>Repeats every {task.repeatInterval > 1 ? task.repeatInterval + ' days' : 'day'}</div>
-                                    </DropdownMenuItem>
-                                </>
-                            :
-                                <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem disabled>
-                                        <div>This is not a repeating task</div>
-                                    </DropdownMenuItem>
-                                </>
-                            }
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></span>
+                <TaskMoreInfo taskObject={task} />
             </li>
     );
 
