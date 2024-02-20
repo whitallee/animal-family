@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils";
 import prisma from "@/util/prisma-client";
 
 export default async function AboutEnclosure ({params: { enclosureInfo }}: {params: {enclosureInfo: string}}) {

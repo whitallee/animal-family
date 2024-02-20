@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils";
 import Link from "next/link";
 
 export default async function VerificationSuccess({params: { phoneNumber }}: {params: {phoneNumber: string}}) {

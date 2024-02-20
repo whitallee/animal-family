@@ -1,10 +1,8 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { stringJoin } from '@/lib/utils';
-import { Trash, MoreVertical, SquarePen, BoxSelect, CheckSquare, MessageCircle, MessageCircleOff} from 'lucide-react';
+import { BoxSelect, CheckSquare } from 'lucide-react';
 import { completeTask } from '@/lib/server-actions';
 import TaskMoreInfo from '@/components/TaskMoreInfo';
 import { TaskObjectType } from '@/lib/types';
