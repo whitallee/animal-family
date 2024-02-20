@@ -4,7 +4,7 @@ import './globals.css'
 
 import SessionProvider from '@/components/SessionProvider'
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from '@/lib/utils'
 
 import NavMenu from '@/components/NavMenu'
 
