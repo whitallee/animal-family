@@ -58,7 +58,6 @@ export default async function Tasks() {
     //Completed Tasks
     let completedTasks: TaskObjectType[] = [];
     userObject?.tasks.filter(task => (task.complete)).forEach(task => {completedTasks.push(task)});
-    const today = new Date;
     const completedTaskItems = completedTasks.map(task => 
         <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
             <div className='flex items-center opacity-50'>

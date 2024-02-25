@@ -6,9 +6,9 @@ import { redirect } from 'next/navigation';
 export async function completeTask(data: FormData) {
     "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
+    const taskId: number = parseInt(data.get("taskId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
   
     await prisma.task.update({
         data: {
@@ -18,17 +18,17 @@ export async function completeTask(data: FormData) {
         where: {
           id: taskId,
           userEmail: email
-        }})
+        }});
   
-    redirect("/tasks")
-}
+    redirect("/tasks");
+};
 
 export async function unCompleteTask(data: FormData) {
     "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
+    const taskId: number = parseInt(data.get("taskId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
   
     await prisma.task.update({ 
         data: {
@@ -37,10 +37,10 @@ export async function unCompleteTask(data: FormData) {
         where: {
           id: taskId,
           userEmail: email
-        }})
+        }});
   
-    redirect("/tasks")
-}
+    redirect("/tasks");
+};
 
 export async function enableText(data: FormData) {
     "use server"
@@ -52,7 +52,7 @@ export async function enableText(data: FormData) {
     const userInfo = await prisma.user.findFirst({where: {email: email}});
     if (!userInfo?.phoneNumber) {
         redirect("verification/add-phone");
-    }
+    };
 
     await prisma.task.update({ 
         data: {
@@ -69,9 +69,9 @@ export async function enableText(data: FormData) {
 export async function disableText(data: FormData) {
     "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
+    const taskId: number = parseInt(data.get("taskId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
   
     await prisma.task.update({ 
         data: {
@@ -80,23 +80,73 @@ export async function disableText(data: FormData) {
         where: {
           id: taskId,
           userEmail: email
-        }})
+        }});
   
-    redirect("/tasks")
+    redirect("/tasks");
 };
 
 export async function deleteTask(data: FormData) {
     "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
-    const taskId: number = parseInt(data.get("taskId")?.valueOf())
-    const session = await getServerSession(authOptions)
-    const email: any = session?.user?.email
+    const taskId: number = parseInt(data.get("taskId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
   
     await prisma.task.delete({ 
         where: {
           id: taskId,
           userEmail: email
-        }})
+        }});
   
-    redirect("/tasks")
+    redirect("/tasks");
 };
+
+export async function deleteAnimal(data: FormData) {
+    "use server"
+  // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
+    const animalId: number = parseInt(data.get("animalId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
+
+    await prisma.animal.delete({ 
+        where: {
+          id: animalId,
+          User: email
+        }});
+  
+    redirect("/");
+};
+
+export async function deleteEnclosure(data: FormData) {
+    "use server"
+  // @ts-ignore ignores 'enclosureId' type of 'string | Object | undefined'
+    const enclosureId: number = parseInt(data.get("enclosureId")?.valueOf());
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
+
+    await prisma.animal.updateMany({
+        where: {
+            enclosureId: enclosureId,
+            User: email
+        },
+        data: {
+            enclosureId: null,
+        }
+    });
+
+    await prisma.task.deleteMany({
+        where: {
+            enclosureId: enclosureId,
+            userEmail: email
+        }
+    });
+  
+    await prisma.enclosure.delete({
+        where: {
+            id: enclosureId,
+            userEmail: email
+        }
+    });
+  
+    redirect("/");
+}
