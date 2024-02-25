@@ -9,3 +9,22 @@ export type TaskObjectType = {
     lastCompleted: Date,
     textEnabled: boolean
   };
+
+export type AnimalObjectType = {
+    id: number,
+    name: string,
+    species: string
+  };
+
+export type EnclosureObjectType = {
+    id: number;
+    name: string;
+    userEmail: string;
+    enclosureFamily: {
+      id: number;
+      name: string;
+      species: string;
+      userId: string;
+      enclosureId: number | null;
+  }[]
+}
