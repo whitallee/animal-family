@@ -6,6 +6,7 @@ import { BoxSelect, CheckSquare } from 'lucide-react';
 import { completeTask } from '@/lib/server-actions';
 import TaskMoreInfo from '@/components/TaskMoreInfo';
 import { TaskObjectType } from '@/lib/types';
+import { Suspense } from 'react';
 
 import { Poppins } from 'next/font/google'
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
@@ -108,11 +109,13 @@ export default async function Tasks() {
     return (
         <>
             <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Tasks</div></div>
-            <ul>
-                {animalTaskItems}
-                {enclosureTaskItems}
-                {completedTaskItems}
-            </ul>
+            <Suspense>
+                <ul>
+                    {animalTaskItems}
+                    {enclosureTaskItems}
+                    {completedTaskItems}
+                </ul>
+            </Suspense>
         </>
     )
 }
