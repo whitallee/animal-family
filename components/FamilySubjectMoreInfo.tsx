@@ -14,6 +14,7 @@ import { deleteAnimal, deleteEnclosure } from '@/lib/server-actions';
 
 export default async function FamilySubjectMoreInfo({ subjectObject }: {subjectObject: AnimalObjectType | EnclosureObjectType}) {
     //console.log(typeof(subjectObject.enclosureFamily));
+    //
     return(
         <DropdownMenu>
             <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
