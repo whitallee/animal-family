@@ -5,6 +5,7 @@ import './globals.css'
 import SessionProvider from '@/components/SessionProvider'
 import { getServerSession } from "next-auth"
 import { authOptions } from '@/lib/utils'
+import { Suspense } from 'react'
 
 import NavMenu from '@/components/NavMenu'
 
@@ -28,7 +29,9 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <main className='flex flex-col items-center gap-8 min-h-screen'>
             <NavMenu/>
-            {children}
+            <Suspense fallback={<>Loading...</>}>
+              {children}
+            </Suspense>
           </main>
         </SessionProvider>
       </body>
