@@ -14,6 +14,7 @@ import { completeTask, unCompleteTask, disableText, enableText, deleteTask } fro
 
 export default function TaskMoreInfo ({taskObject}: {taskObject: TaskObjectType}) {
     const today = new Date;
+    const editLink = stringJoin(["/edit/task/", taskObject.task, "/", taskObject.id.toString()]);
     return(
         <DropdownMenu>
             <DropdownMenuTrigger className="rounded aspect-square px-2 hover:bg-zinc-600 transition"><MoreVertical className="h-4"/></DropdownMenuTrigger>
@@ -36,7 +37,7 @@ export default function TaskMoreInfo ({taskObject}: {taskObject: TaskObjectType}
                     </DropdownMenuItem>
                 }
                 <DropdownMenuItem>
-                    <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={stringJoin(["/edit/task/", taskObject.task, "/", taskObject.id.valueOf.toString()])}>Edit<SquarePen className="h-4"/></Link>
+                    <Link className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition" href={editLink}>Edit<SquarePen className="h-4"/></Link>
                 </DropdownMenuItem>
                 {taskObject.repeatDayInterval && taskObject.textEnabled ?
                     //Text option for disabling
