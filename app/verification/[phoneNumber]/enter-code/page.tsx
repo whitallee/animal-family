@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import NotLoggedIn from '@/components/NotLoggedIn';
 
 async function verifyCode (data: FormData) {
     "use server"
@@ -75,10 +76,12 @@ if (!phoneTest?.phoneNumber) {
 redirect("/verification/" + phoneNumber + "/success");
 }
 
-    
 
 export default async function AddPhone({params: { phoneNumber }}: {params: {phoneNumber: string}}) {
     const session = getServerSession(authOptions);
+    if (!session) {
+        return(<NotLoggedIn message='Must be logged in to verify a phone number.'/>)
+    }
 
     return(
         <div className='w-screen m-auto flex justify-center'>

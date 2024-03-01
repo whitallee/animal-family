@@ -10,6 +10,7 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
+import NotLoggedIn from "@/components/NotLoggedIn"
   
 
 async function createTask(data: FormData) {
@@ -94,16 +95,7 @@ export default async function AddAnimal() {
     const session = await getServerSession(authOptions);
 
     if(!session) {
-        return (
-            <>
-                <div className="text-center">
-                  Must be logged in to add a task.
-                </div>
-                <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
-                </form>
-            </>
-        )
+        return (<NotLoggedIn message="Must be logged in to create a task."/>)
     }
 
     const email = session?.user?.email

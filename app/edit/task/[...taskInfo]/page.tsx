@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/utils";
 import prisma from "@/util/prisma-client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import NotLoggedIn from "@/components/NotLoggedIn";
 
 async function editTaskName (data: FormData) {
     "use server"
@@ -45,16 +46,7 @@ export default async function EditTask ({params: { taskInfo }}: {params: {taskIn
     const session = await getServerSession(authOptions);
 
     if(!session){
-        return (
-            <>
-                <div className="text-center">
-                    Must be logged in to edit this Task.
-                </div>
-                <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
-                </form>
-            </>
-        )
+        return (<NotLoggedIn message="Must be logged in to edit this task."/>)
     }
 
     const email: any = session?.user?.email

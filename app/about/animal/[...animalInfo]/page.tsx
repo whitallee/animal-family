@@ -13,6 +13,7 @@ import {
 import { MoreVerticalIcon, TrashIcon, EditIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import { stringJoin } from "@/lib/utils";
+import NotLoggedIn from "@/components/NotLoggedIn";
 
 async function deleteTask(data: FormData) {
     "use server"
@@ -38,16 +39,7 @@ export default async function AboutAnimal ({params: { animalInfo }}: {params: {a
     const session = await getServerSession(authOptions);
 
     if(!session){
-        return (
-            <>
-                <div className="text-center">
-                    Must be logged in to view animal info.
-                </div>
-                <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
-                </form>
-            </>
-        )
+        return (<NotLoggedIn message="Must be logged in to view this animal's info."/>)
     }
 
     const email: any = session?.user?.email

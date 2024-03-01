@@ -1,9 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/utils";
 import Link from "next/link";
+import NotLoggedIn from "@/components/NotLoggedIn";
 
 export default async function VerificationSuccess({params: { phoneNumber }}: {params: {phoneNumber: string}}) {
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return(<NotLoggedIn message="Must be logged in to successfully use phone number."/>)
+    }
 
     return(
         <div className="flex flex-col items-center justify-center m-auto gap-8">
