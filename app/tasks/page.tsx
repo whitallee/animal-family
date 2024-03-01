@@ -17,7 +17,7 @@ export default async function Tasks() {
     const email: any = session?.user?.email;
 
     if(!session) {
-        return (<NotLoggedIn message='Must be logged in to view tasks.' />)
+        return (<NotLoggedIn message='Must be logged in to view your tasks.'/>)
     };
 
     const userObject = await prisma.user.findFirst({

@@ -7,6 +7,7 @@ import FamilySubjectMoreInfo from "@/components/FamilySubjectMoreInfo";
 import { EnclosureObjectType } from "@/lib/types";
 
 import { Poppins } from 'next/font/google'
+import NotLoggedIn from "@/components/NotLoggedIn";
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
 
 
@@ -16,16 +17,7 @@ export default async function MyFamily() {
     const email: any = session?.user?.email;
 
     if(!session){
-        return (
-            <div className="m-auto flex flex-col gap-4">
-                <div className="text-center">
-                    Must be logged in to view your animal family.
-                </div>
-                <form method="get" action="/api/auth/signin" className="w-100 flex justify-center">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
-                </form>
-            </div>
-        )
+        return (<NotLoggedIn message="Must be logged in to view your animal family."/>)
     };
 
     const userObject = await prisma.user.findFirst({
