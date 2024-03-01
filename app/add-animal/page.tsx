@@ -3,52 +3,44 @@ import prisma from "@/util/prisma-client"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/utils"
 import { redirect } from "next/navigation"
+import NotLoggedIn from "@/components/NotLoggedIn"
 
 async function createAnimal(data: FormData) {
 
   "use server"
 
-    const session = await getServerSession(authOptions);
-    const petName = data.get("petName")?.valueOf()
-    const species = data.get("species")?.valueOf()
-    const email: any = session?.user?.email
+  const session = await getServerSession(authOptions);
+  const petName = data.get("petName")?.valueOf()
+  const species = data.get("species")?.valueOf()
+  const email: any = session?.user?.email
 
-    if (typeof(petName) !== "string" || petName.length === 0) {
-        redirect("/add-animal")
-    }
-    else if (typeof(species) !== "string" || species.length === 0) {
-        redirect("/add-animal")
-    }
+  if (typeof(petName) !== "string" || petName.length === 0) {
+      redirect("/add-animal")
+  }
+  else if (typeof(species) !== "string" || species.length === 0) {
+      redirect("/add-animal")
+  }
 
-    await prisma.animal.create({ data: {
-        name: petName,
-        species: species,
-        User: {
-            connect: {
-                email: email,
-            }
-        }}})
+  await prisma.animal.create({ data: {
+      name: petName,
+      species: species,
+      User: {
+          connect: {
+              email: email,
+          }
+      }}})
 
-    redirect("/")
+  redirect("/")
 }
 
 
 export default async function AddAnimal() {
 
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    if(!session) {
-        return (
-            <>
-                <div className="text-center">
-                  Must be logged in to add an animal to your family.
-                </div>
-                <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
-                </form>
-            </>
-        )
-    }
+  if(!session) {
+      return (<NotLoggedIn message="Must be logged in to add an animal to your family."/>)
+  }
 
   return (
     <div className="flex flex-col items-center justify-center m-auto">

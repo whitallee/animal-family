@@ -1,21 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/utils";
 import prisma from "@/util/prisma-client";
+import NotLoggedIn from "@/components/NotLoggedIn";
 
 export default async function AboutEnclosure ({params: { enclosureInfo }}: {params: {enclosureInfo: string}}) {
     const session = await getServerSession(authOptions);
 
     if(!session){
-        return (
-            <>
-                <div className="text-center">
-                    Must be logged in to view enclosure info.
-                </div>
-                <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Log In</button>
-                </form>
-            </>
-        )
+        return (<NotLoggedIn message="Must be logged in to view this enclosure's info."/>)
     }
 
     const email: any = session?.user?.email

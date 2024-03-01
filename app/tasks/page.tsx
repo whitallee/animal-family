@@ -1,14 +1,13 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
-import Link from 'next/link';
 import { BoxSelect, CheckSquare } from 'lucide-react';
 import { completeTask } from '@/lib/server-actions';
 import TaskMoreInfo from '@/components/TaskMoreInfo';
 import { TaskObjectType } from '@/lib/types';
-import { Suspense } from 'react';
 
 import { Poppins } from 'next/font/google'
+import NotLoggedIn from '@/components/NotLoggedIn';
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
 
 
@@ -18,18 +17,7 @@ export default async function Tasks() {
     const email: any = session?.user?.email;
 
     if(!session) {
-        return (
-            <>
-                <div className="text-center">
-                  Must be logged in to view your tasks.
-                </div>
-                <form method="get" action="/api/auth/signin">
-                  <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">
-                    Log In
-                  </button>
-                </form>
-            </>
-        )
+        return (<NotLoggedIn message='Must be logged in to view tasks.' />)
     };
 
     const userObject = await prisma.user.findFirst({
@@ -109,13 +97,11 @@ export default async function Tasks() {
     return (
         <>
             <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Tasks</div></div>
-            <Suspense>
-                <ul>
-                    {animalTaskItems}
-                    {enclosureTaskItems}
-                    {completedTaskItems}
-                </ul>
-            </Suspense>
+            <ul>
+                {animalTaskItems}
+                {enclosureTaskItems}
+                {completedTaskItems}
+            </ul>
         </>
     )
 }

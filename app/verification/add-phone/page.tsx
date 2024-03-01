@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import NotLoggedIn from '@/components/NotLoggedIn';
 
 async function verifyPhoneNumber (data: FormData) {
     "use server"
@@ -46,6 +47,9 @@ async function verifyPhoneNumber (data: FormData) {
 
 export default async function AddPhone() {
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return(<NotLoggedIn message='Must be logged in to add a phone number to your account.'/>)
+    }
     const email = session?.user?.email;
     const userInfo = await prisma.user.findFirst({where: {email: email}});
 
