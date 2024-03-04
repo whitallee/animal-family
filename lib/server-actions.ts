@@ -1,10 +1,17 @@
+"use server"
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from './utils';
 import prisma from '@/util/prisma-client';
 import { redirect } from 'next/navigation';
+import { CompleteTaskFormSchema } from './form-schema';
+import { revalidatePath } from 'next/cache';
+import { createSafeActionClient } from 'next-safe-action';
+
+
 
 export async function completeTask(data: FormData) {
-    "use server"
+  //  "use server"
   // @ts-ignore ignores 'animalId' type of 'string | Object | undefined'
     const taskId: number = parseInt(data.get("taskId")?.valueOf());
     const session = await getServerSession(authOptions);
@@ -22,6 +29,32 @@ export async function completeTask(data: FormData) {
   
     redirect("/tasks");
 };
+
+export const safeCompleteAction = createSafeActionClient();
+export const completeTaskSafely = safeCompleteAction(CompleteTaskFormSchema, async({taskId}) => {
+    const session = await getServerSession(authOptions);
+    const email: any = session?.user?.email;
+    const completedTask = await prisma.task.update({
+        data: {
+            complete: true,
+            lastCompleted: new Date(),
+        },
+        where: {
+            id: taskId,
+            userEmail: email
+        }
+    });
+
+    if(!completedTask) return {error: "Could not complete task"};
+    if(completedTask.complete){
+        revalidatePath("/tasks");
+        return {success: completedTask};
+    }
+})
+
+
+
+
 
 export async function unCompleteTask(data: FormData) {
     "use server"

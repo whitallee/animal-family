@@ -5,12 +5,11 @@ import { BoxSelect, CheckSquare } from 'lucide-react';
 import { completeTask } from '@/lib/server-actions';
 import TaskMoreInfo from '@/components/TaskMoreInfo';
 import { TaskObjectType } from '@/lib/types';
-
 import { Poppins } from 'next/font/google'
 import NotLoggedIn from '@/components/NotLoggedIn';
+import { CompleteTaskForm } from '@/components/CompleteTaskForm';
+
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
-
-
 
 export default async function Tasks() {
     const session = await getServerSession(authOptions);
@@ -67,10 +66,7 @@ export default async function Tasks() {
     });
     const animalTaskItems = animalTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <form className='flex items-center' action={completeTask}>
-                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                    <button type="submit"><BoxSelect className='h-6'/></button>
-                </form>
+                <CompleteTaskForm taskId={task.id}/>
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></span>
                 <TaskMoreInfo taskObject={task} />
             </li>
@@ -85,10 +81,7 @@ export default async function Tasks() {
     });
     const enclosureTaskItems = enclosureTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <form className='flex items-center' action={completeTask}>
-                    <input type="hidden" id="taskId" name="taskId" value={task.id}/>
-                    <button type="submit"><BoxSelect className='h-6'/></button>
-                </form>
+                <CompleteTaskForm taskId={task.id}/>
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></span>
                 <TaskMoreInfo taskObject={task} />
             </li>
