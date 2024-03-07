@@ -43,19 +43,6 @@ export default async function Tasks() {
         )
     }
 
-    //Completed Tasks
-    let completedTasks: TaskObjectType[] = [];
-    userObject?.tasks.filter(task => (task.complete)).forEach(task => {completedTasks.push(task)});
-    const completedTaskItems = completedTasks.map(task => 
-        <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-            <div className='flex items-center opacity-50'>
-                <CheckSquare className='h-6'/>
-            </div>
-            <s className='opacity-50 flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center justify-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></s>
-            <TaskMoreInfo taskObject={task} />
-        </li>
-    );
-
 
     //Animal Tasks
     let animalTasks: TaskObjectType[] = []
@@ -66,7 +53,7 @@ export default async function Tasks() {
     });
     const animalTaskItems = animalTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <CompleteTaskForm taskId={task.id}/>
+                <CompleteTaskForm taskId={task.id} moreInfoVariant={false}/>
                 <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></span>
                 <TaskMoreInfo taskObject={task} />
             </li>
@@ -81,10 +68,27 @@ export default async function Tasks() {
     });
     const enclosureTaskItems = enclosureTasks.map(task => 
             <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
-                <CompleteTaskForm taskId={task.id}/>
-                <span className='flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></span>
+                <CompleteTaskForm taskId={task.id} moreInfoVariant={false}/>
+                <span className='flex w-full justify-between'>
+                    <strong className='flex items-center'>{task.task}</strong>
+                    <span className='text-zinc-500 italic px-2 flex justify-center items-center'> &#8212; </span>
+                    <span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span>
+                </span>
                 <TaskMoreInfo taskObject={task} />
             </li>
+    );
+
+    //Completed Tasks
+    let completedTasks: TaskObjectType[] = [];
+    userObject?.tasks.filter(task => (task.complete)).forEach(task => {completedTasks.push(task)});
+    const completedTaskItems = completedTasks.map(task => 
+        <li key={task.id} className="flex place-content-between items-center gap-8 py-4 px-8">
+            <div className='flex items-center opacity-50'>
+                <CheckSquare className='h-6'/>
+            </div>
+            <s className='opacity-50 flex w-full justify-between'><strong className='flex items-center'>{task.task}</strong><span className='text-zinc-500 italic px-2 flex items-center justify-center'> &#8212; </span><span className="text-zinc-500 italic flex items-center text-right">{task.subjectName}</span></s>
+            <TaskMoreInfo taskObject={task} />
+        </li>
     );
 
     return (
