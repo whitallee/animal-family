@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { stringJoin } from '@/lib/utils';
 import { TaskObjectType } from '@/lib/types';
 import { completeTask, unCompleteTask, disableText, enableText, deleteTask } from '@/lib/server-actions';
+import { CompleteTaskForm } from './CompleteTaskForm';
 
 export default function TaskMoreInfo ({taskObject}: {taskObject: TaskObjectType}) {
     const today = new Date;
@@ -23,10 +24,11 @@ export default function TaskMoreInfo ({taskObject}: {taskObject: TaskObjectType}
                 <DropdownMenuSeparator />
                 {!!!taskObject.complete ?
                     <DropdownMenuItem>
-                        <form className='w-full' action={completeTask}>
+                        <CompleteTaskForm taskId={taskObject.id} moreInfoVariant={true}/>
+                        {/* <form className='w-full' action={completeTask}>
                             <input type="hidden" id="taskId" name="taskId" value={taskObject.id}/>
                             <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Complete<CheckSquare className='h-4'/></button>
-                        </form>
+                        </form> */}
                     </DropdownMenuItem>
                 :
                     <DropdownMenuItem>

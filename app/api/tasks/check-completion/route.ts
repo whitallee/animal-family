@@ -6,11 +6,12 @@ export const revalidate = 0;
 export async function GET (request: Request) {
     const today = new Date();
     const tasks = await prisma.task.findMany({where: {complete: true}});
-    const millisecondsPerDay = 1000 * 60 * 60 * 24;
+    const millisecondsPerHour = 1000 * 60 * 60;
     for await (const task of tasks) {
         if (task.complete && task.repeatDayInterval) {
-            const daysPassed = (today.getTime() - task.lastCompleted.getTime())/millisecondsPerDay;
-            if (daysPassed >= task.repeatDayInterval) {
+            const hoursPassed = (today.getTime() - task.lastCompleted.getTime())/millisecondsPerHour;
+            //repeats an hour earlier than previously completed
+            if (hoursPassed >= (task.repeatDayInterval - 1)) {
                 await prisma.task.update({
                     data: {
                         complete: false
