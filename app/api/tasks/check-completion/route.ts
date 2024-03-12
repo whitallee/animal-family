@@ -11,7 +11,7 @@ export async function GET (request: Request) {
         if (task.complete && task.repeatDayInterval) {
             const hoursPassed = (today.getTime() - task.lastCompleted.getTime())/millisecondsPerHour;
             //repeats an hour earlier than previously completed
-            if (hoursPassed >= (task.repeatDayInterval * 24 * millisecondsPerHour - 1)) {
+            if (hoursPassed >= (task.repeatDayInterval * 24 - 1)) {
                 await prisma.task.update({
                     data: {
                         complete: false
