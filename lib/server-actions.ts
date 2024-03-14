@@ -160,7 +160,7 @@ export async function deleteEnclosure(data: FormData) {
     await prisma.animal.updateMany({
         where: {
             enclosureId: enclosureId,
-            User: email
+            userId: email
         },
         data: {
             enclosureId: null,
