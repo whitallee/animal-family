@@ -150,7 +150,7 @@ export default async function AddAnimal() {
                 //No verified phone number available. Add a phone number to your account to enable task texting.
                 <div className="flex gap-4 text-zinc-600"><input disabled id="textOption" name="textOption" type="checkbox"></input><label htmlFor="textOption">Enable Texting (not available)</label><Link href="/verification/add-phone" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Phone</Link></div>}
             <div className="flex justify-evenly">
-                <Link href=".">Cancel</Link>
+                <Link href="/tasks">Cancel</Link>
                 <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Task</button>
             </div>
         </form>

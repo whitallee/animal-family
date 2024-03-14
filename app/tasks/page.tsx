@@ -1,13 +1,13 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
-import { BoxSelect, CheckSquare } from 'lucide-react';
-import { completeTask } from '@/lib/server-actions';
+import { BoxSelect, CheckSquare, ListPlus } from 'lucide-react';
 import TaskMoreInfo from '@/components/TaskMoreInfo';
 import { TaskObjectType } from '@/lib/types';
 import { Poppins } from 'next/font/google'
 import NotLoggedIn from '@/components/NotLoggedIn';
 import { CompleteTaskForm } from '@/components/CompleteTaskForm';
+import Link from 'next/link';
 
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
 
@@ -34,11 +34,7 @@ export default async function Tasks() {
         return (
             <>
                 <div className="text-center">You have no tasks.</div>
-                <form action="/add-task">
-                    <button type="submit" className="mx-2 px-2 rounded text-zinc-300 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">
-                    Add Task
-                    </button>
-                </form>
+                <Link className="text-zinc-200 border-2 p-2 mb-8 rounded-2xl flex gap-4" href="/add-task">Add Task<ListPlus/></Link>
             </>
         )
     }
@@ -92,13 +88,16 @@ export default async function Tasks() {
     );
 
     return (
-        <>
-            <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Tasks</div></div>
-            <ul>
-                {animalTaskItems}
-                {enclosureTaskItems}
-                {completedTaskItems}
-            </ul>
-        </>
+        <div className='w-full flex flex-col items-center'>
+            <div className='text-4xl text-zinc-500 flex items-center gap-4'><div className={poppins.className}>My Tasks</div><Link className="text-zinc-200 border-2 p-2 rounded-2xl hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-task"><ListPlus/></Link></div>
+            <div className='flex flex-wrap justify-center'>
+                <ul className=''>
+                    {animalTaskItems}
+                    {enclosureTaskItems}
+                    {completedTaskItems}
+                </ul>
+            </div>
+            <Link className="text-zinc-200 border-2 p-2 m-8 rounded-2xl flex gap-4 hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-task">Add Task<ListPlus/></Link>
+        </div>
     )
 }

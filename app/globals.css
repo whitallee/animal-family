@@ -103,7 +103,7 @@
     padding-right: 0.5rem/* 8px */;
     display: flex;
     align-items: center;
-    @apply text-sm sm:text-base transition
+    @apply text-sm sm:text-base transition;
   }
   }
 }
