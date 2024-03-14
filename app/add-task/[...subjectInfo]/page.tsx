@@ -90,8 +90,8 @@ async function createTask(data: FormData) {
 }
 
 
-export default async function AddTask() {
-
+export default async function AddTaskSubject({params: { subjectInfo }}: {params: {subjectInfo: string}}) {
+// URL will have /add-task/[subjectType]/[subjectName]/[subjectId]
     const session = await getServerSession(authOptions);
 
     if(!session) {
@@ -99,6 +99,24 @@ export default async function AddTask() {
     }
 
     const email = session?.user?.email
+
+    let subjectObject: any;
+    if (subjectInfo[0] === "animal") {
+        subjectObject = await prisma.animal.findFirst({
+            where: {
+                name: decodeURI(subjectInfo[1]),
+                id: parseInt(subjectInfo[2])
+            },
+        });
+    }
+    else if (subjectInfo[0] === "enclosure") {
+        subjectObject = await prisma.enclosure.findFirst({
+            where: {
+                name: decodeURI(subjectInfo[1]),
+                id: parseInt(subjectInfo[2])
+            },
+        });
+    }
 
     const userAnimalsEnclosures = await prisma.user.findFirst({
         where: {
@@ -111,8 +129,8 @@ export default async function AddTask() {
     })
 
     const animalOptions = userAnimalsEnclosures?.animals.map(animal =>
-            <option className="text-zinc-700" key={animal.name} value={animal.name}>{animal.name}</option>
-        )
+        <option className="text-zinc-700" key={animal.name} value={animal.name}>{animal.name}</option>
+    )
     
     const enclosureOptions = userAnimalsEnclosures?.enclosures.map(enclosure =>
         <option className="text-zinc-700" key={enclosure.name} value={enclosure.name}>{enclosure.name}</option>
@@ -133,8 +151,7 @@ export default async function AddTask() {
             </Popover>
         </div>
         <form action={createTask} className="flex flex-col gap-8">
-            <select required defaultValue="default" name="taskSubject" id="taskSubject" className="rounded text-zinc-900 p-0.5">
-                <option disabled value="default" className="text-zinc-500">(Select an animal or enclosure)</option>
+            <select required defaultValue={subjectObject.name} name="taskSubject" id="taskSubject" className="rounded text-zinc-900 p-0.5">
                 <optgroup label="Animals">
                     {animalOptions}
                 </optgroup>
@@ -150,7 +167,7 @@ export default async function AddTask() {
                 //No verified phone number available. Add a phone number to your account to enable task texting.
                 <div className="flex gap-4 text-zinc-600"><input disabled id="textOption" name="textOption" type="checkbox"></input><label htmlFor="textOption">Enable Texting (not available)</label><Link href="/verification/add-phone" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Phone</Link></div>}
             <div className="flex justify-evenly">
-                <Link href="/tasks">Cancel</Link>
+                <Link href="/">Cancel</Link>
                 <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Add Task</button>
             </div>
         </form>
