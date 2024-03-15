@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/utils';
 import prisma from '@/util/prisma-client';
-import { BoxSelect, CheckSquare, ListPlus } from 'lucide-react';
+import { BoxSelect, CheckSquare, ListPlus, ListTodo } from 'lucide-react';
 import TaskMoreInfo from '@/components/TaskMoreInfo';
 import { TaskObjectType } from '@/lib/types';
 import { Poppins } from 'next/font/google'
@@ -34,7 +34,7 @@ export default async function Tasks() {
         return (
             <>
                 <div className="text-center">You have no tasks.</div>
-                <Link className="text-zinc-200 border-2 p-2 mb-8 rounded-2xl flex gap-4" href="/add-task">Add Task<ListPlus/></Link>
+                <Link className="text-zinc-200 border-2 p-2 mb-8 rounded-2xl flex gap-4" href="/add-task">Add Task<ListTodo/></Link>
             </>
         )
     }
@@ -97,7 +97,7 @@ export default async function Tasks() {
                     {completedTaskItems}
                 </ul>
             </div>
-            <Link className="text-zinc-200 border-2 p-2 m-8 rounded-2xl flex gap-4 hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-task">Add Task<ListPlus/></Link>
+            <Link className="text-zinc-200 border-2 p-2 m-8 rounded-2xl flex gap-4 hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-task">Add Task<ListTodo/></Link>
         </div>
     )
 }
