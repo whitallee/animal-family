@@ -8,6 +8,7 @@ import { EnclosureObjectType } from "@/lib/types";
 
 import { Poppins } from 'next/font/google'
 import NotLoggedIn from "@/components/NotLoggedIn";
+import { Home, PawPrint } from "lucide-react";
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
 
 
@@ -91,11 +92,15 @@ export default async function MyFamily() {
 
     return (
         <>
-            <div className='text-4xl text-zinc-500'><div className={poppins.className}>My Animal Family</div></div>
+            <div className='flex gap-4 items-center text-4xl text-zinc-500 px-4'><div className={poppins.className}>My Animal Family</div><Link className="flex items-center text-zinc-200 border-2 p-2 rounded-2xl hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-animal"><span className="text-2xl">+</span><PawPrint/></Link><Link className="flex items-center text-zinc-200 border-2 p-2 rounded-2xl hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-enclosure"><span className="text-2xl">+</span><Home/></Link></div>
             <ul>
                 {animalListItems}
                 {enclosureAnimalListItems}
             </ul>
+            <div className="flex gap-4">
+                <Link className="text-zinc-200 border-2 p-2 mb-8 rounded-2xl flex gap-4 hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-animal">Add Animal<PawPrint/></Link>
+                <Link className="text-zinc-200 border-2 p-2 mb-8 rounded-2xl flex gap-4 hover:bg-zinc-200 hover:text-zinc-800 transition" href="/add-enclosure">Add Enclosure<Home/></Link>
+            </div>
         </>
     )
 }
