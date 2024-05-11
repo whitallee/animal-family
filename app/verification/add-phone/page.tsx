@@ -48,13 +48,14 @@ async function verifyPhoneNumber (data: FormData) {
 export default async function AddPhone() {
     const session = await getServerSession(authOptions);
     if (!session) {
-        return(<NotLoggedIn message='Must be logged in to add a phone number to your account.'/>)
+        return(<NotLoggedIn message='Must be logged in to add a phone number to your account. By logging in to Animal Family and verifying your phone number for SMS messaging, you agree to send and receive SMS text messages at the phone number provided, through Animal Family.'/>)
     }
     const email = session?.user?.email;
     const userInfo = await prisma.user.findFirst({where: {email: email}});
 
     return(
-        <div className='w-screen m-auto flex justify-center'>
+        <div className='w-screen m-auto flex flex-col justify-center items-center'>
+            <p className='py-10 max-w-md text-center'>By entering and verifying your phone number for SMS messaging, you agree to send and receive SMS text messages at the phone number provided, through Animal Family.</p>
             <form action={verifyPhoneNumber} className=''>
                 {userInfo?.phoneNumber ?
                     <div className='text-center pb-10 max-w-xs text-zinc-500'><span className='text-zinc-100 italic'>{userInfo.phoneNumber}</span> is already connected to your account.</div>
