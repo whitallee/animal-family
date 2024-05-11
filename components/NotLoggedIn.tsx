@@ -1,6 +1,6 @@
 export default function NotLoggedIn ({message}: {message: string}) {
     return (
-        <div className="m-auto flex flex-col gap-4 items-center">
+        <div className="m-auto flex flex-col gap-4 items-center px-8 md:max-w-lg">
             <div className="text-center">
                 {message}
             </div>
