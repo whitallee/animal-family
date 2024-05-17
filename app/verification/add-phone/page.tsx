@@ -12,6 +12,12 @@ async function verifyPhoneNumber (data: FormData) {
     const phoneNumberArea = data.get("phoneNumberArea")?.valueOf();
     const phoneNumber3 = data.get("phoneNumber3")?.valueOf();
     const phoneNumber4 = data.get("phoneNumber4")?.valueOf();
+    const smsConsentCheck = data.get("smsConsentCheck")?.valueOf();
+
+    if(smsConsentCheck !== "on") {
+        console.log("\"" + smsConsentCheck + "\" is an invalid value for the SMS Consent Checkbox");
+        redirect("/verification/add-phone");
+    }
 
     const phoneNumber = "+1" + phoneNumberArea + phoneNumber3 + phoneNumber4;
     const regex = /\+\d{11}/
@@ -48,14 +54,14 @@ async function verifyPhoneNumber (data: FormData) {
 export default async function AddPhone() {
     const session = await getServerSession(authOptions);
     if (!session) {
-        return(<NotLoggedIn message='Must be logged in to add a phone number to your account. By logging in to Animal Family and verifying your phone number for SMS messaging, you agree to send and receive SMS text messages at the phone number provided, through Animal Family.'/>)
+        return(<NotLoggedIn message='Must be logged in to add a phone number to your account. After logging in to Animal Family, in order to add and verify your phone number for SMS messaging, you will be given the option to opt in to recieve text messages from Animal Family for the purpose of being notified when a task needs to be completed, as well as to recieve a text message for the purpose of verifying a valid phone number.'/>)
     }
     const email = session?.user?.email;
     const userInfo = await prisma.user.findFirst({where: {email: email}});
 
     return(
-        <div className='w-screen m-auto flex flex-col justify-center items-center'>
-            <p className='py-10 max-w-md text-center'>By entering and verifying your phone number for SMS messaging, you agree to send and receive SMS text messages at the phone number provided, through Animal Family.</p>
+        <div className='w-screen m-auto flex flex-col justify-center items-center px-4'>
+            {/* <p className='py-10 max-w-md text-center'>By entering and verifying your phone number for SMS messaging, you agree to send and receive SMS text messages at the phone number provided, through Animal Family.</p> */}
             <form action={verifyPhoneNumber} className=''>
                 {userInfo?.phoneNumber ?
                     <div className='text-center pb-10 max-w-xs text-zinc-500'><span className='text-zinc-100 italic'>{userInfo.phoneNumber}</span> is already connected to your account.</div>
@@ -70,6 +76,10 @@ export default async function AddPhone() {
                         <input className='rounded w-[4ch] text-zinc-900' maxLength={4} required type='text' id='phoneNumber4' name='phoneNumber4' placeholder='4567' pattern="[0-9]{4}"></input>
                     </div>
                 </div>
+                <div className='max-w-sm gap-2 pb-10 text-center'>
+                        <input type="checkbox" id='smsConsentCheck' name='smsConsentCheck' required></input>
+                        <label htmlFor='smsConsentCheck'>Check this box to opt in to recieve text messages from Animal Family for the purpose of being notified when a task needs to be completed, as well as to recieve a text message for the purpose of verifying a valid phone number.</label>
+                    </div>
                 <div className="flex justify-evenly">
                     <Link href="/">Cancel</Link>
                     <button type="submit" className="px-2 rounded text-zinc-100 bg-zinc-700 hover:bg-zinc-300 hover:text-zinc-900 transition">Verify Phone Number</button>
