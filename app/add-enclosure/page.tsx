@@ -116,7 +116,7 @@ export default async function AddEnclosure() {
   return (
     <div className="flex flex-col items-center justify-center m-auto">
         <div className="text-4xl text-zinc-600">Add an Enclosure</div>
-        <span className="text-zinc-500 text-center m-4">If an animal already has an enclosure, then it will be moved to the new enclosure.</span>
+        <span className="text-zinc-500 text-center m-4">If a selected animal already has an enclosure, then it will be moved to the new enclosure.</span>
         <form action={createEnclosure} className="flex flex-col gap-4 mx-4">
             <input required autoFocus type="text" placeholder="Enclosure Name" name="enclosureName" className="rounded text-black px-2"></input>
             {animalCheckboxList}
