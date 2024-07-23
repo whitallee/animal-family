@@ -38,6 +38,9 @@
     --foreground-rgb: 24, 24, 27;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
+
+    /* custom variables */
+    --green: #659d40
   }
  
   .dark {
@@ -106,26 +109,4 @@
     @apply text-sm sm:text-base transition;
   }
   }
-}
-
-.i-msg-bubble::before {
-  content: ' ';
-  border-radius: 1rem;
-  background-color: rgb(24, 24, 26);
-  height: 72px;
-  width: 72px;
-  transform: translate(-88px, -16px);
-  position: absolute;
-  z-index: 100000;
-}
-
-.i-msg-bubble::after {
-  content: ' ';
-  border-radius: 1rem;
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
-  height: 36px;
-  width: 36px;
-  transform: translate(-16rem, 20px);
-  position: absolute;
 }

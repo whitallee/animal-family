@@ -31,11 +31,12 @@ export default function TaskMoreInfo ({taskObject}: {taskObject: TaskObjectType}
                         </form> */}
                     </DropdownMenuItem>
                 :
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className='flex flex-col gap-4'>
                         <form className='w-full' action={unCompleteTask}>
                             <input type="hidden" id="taskId" name="taskId" value={taskObject.id}/>
                             <button type="submit" className="w-full rounded flex justify-between items-center px-2 hover:bg-zinc-600 hover:text-white transition">Mark as Incomplete<BoxSelect className='h-4'/></button>
                         </form>
+                        <CompleteTaskForm taskId={taskObject.id} moreInfoVariant={true}/>
                     </DropdownMenuItem>
                 }
                 <DropdownMenuItem>

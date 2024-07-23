@@ -38,7 +38,7 @@ export default function NavMenu() {
     const pathname = usePathname()
 
     return (
-        <div className="bg-zinc-700 px-4 py-2 w-full h-fit flex justify-between sticky top-0">
+        <div className="bg-zinc-700 px-4 py-2 w-full h-fit flex justify-between sticky top-0 z-[10000]">
             <AuthButton/>
             <div className="md:hidden visible flex align-middle">
             <DropdownMenu>
