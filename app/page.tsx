@@ -15,7 +15,6 @@ import {
   
 
 import { Poppins } from 'next/font/google'
-import TextMsgs from "@/components/TextMsgs";
 import TextBubble from "@/components/TextBubble";
 import Auth from "@/components/Auth";
 const poppins = Poppins({ weight: ["300"], subsets: ["latin"] })
